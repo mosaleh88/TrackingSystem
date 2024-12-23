@@ -1,0 +1,4074 @@
+  <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Home</title>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css" integrity="sha512-jnSuA4Ss2PkkikSOLtYs8BlYIeeIK1h99ty4YfvRPAlzr377vr3CXDb7sb7eEEBYjDtcYj+AjBH3FLv5uSJuXg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+  <script>
+    // Check if the user is logged in when the page loads
+      document.addEventListener('DOMContentLoaded', function () {
+        if (!localStorage.getItem('isLoggedIn')) {
+          // If not logged in, redirect to the login page
+          google.script.run
+            .withSuccessHandler(function (htmlContent) {
+              document.open();
+              document.write(htmlContent);
+              document.close();
+            })
+            .getLoginPage(); // Calls your Apps Script function to load the login page
+        } else {
+          // Initialize the logout button functionality
+          initializeLogoutButton();
+        }
+      });
+</script>
+    <style>
+        :root {
+            /* Core Colors */
+            --primary: #2563eb;
+            --primary-light: #60a5fa;
+            --primary-dark: #1d4ed8;
+            --success: #059669;
+            --danger: #dc2626;
+            --warning: #d97706;
+            --info: #0284c7;
+            --text-secondary: #4a5568;
+            --border: #e2e8f0;
+            /* Typography */
+            --font-primary: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+            --font-size-base: 16px;
+            --line-height-base: 1.5;
+            /* Spacing */
+            --spacing-xs: 4px;
+            --spacing-sm: 8px;
+            --spacing-md: 16px;
+            --spacing-lg: 24px;
+            --spacing-xl: 32px;
+            /* Animations - with fallbacks */
+            --transition-timing: cubic-bezier(0.4, 0, 0.2, 1);
+            --bounce-timing: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            --transition-duration: 300ms;
+            --transition-fast: 150ms ease;
+            --transition-normal: 250ms ease;
+            --transition-slow: 350ms ease;
+            /* Cross-browser transition property */
+            --transition: all var(--transition-duration) var(--transition-timing);
+            --transition-transform: transform var(--transition-duration) var(--transition-timing);
+            --transition-opacity: opacity var(--transition-duration) var(--transition-timing);
+            /* Shadows with Safari optimization */
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+            --shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
+            --shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+            /* Gradients with Safari support */
+            /* Border Radius */
+            --radius-sm: 0.25rem;
+            --radius: 0.5rem;
+            --radius-lg: 1rem;
+            --radius-full: 9999px;
+           
+        }
+
+        /* Cross-browser CSS Reset */
+        *,
+        *::before,
+        *::after {
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Safari-specific fixes */
+        @supports (-webkit-touch-callout: none) {
+
+            /* iOS Safari specific styles */
+            .element-with-gradient {
+                background: var(--gradient-primary);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+            }
+
+            /* Fix for sticky hover on iOS */
+            @media (hover: hover) {
+                .hover-element:hover {
+                    transform: translateY(-2px);
+                }
+            }
+        }
+
+        /* Cross-browser animations */
+        @-webkit-keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @-webkit-keyframes slideIn {
+            from {
+                -webkit-transform: translateY(-20px);
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+
+            to {
+                -webkit-transform: translateY(0);
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                -webkit-transform: translateY(-20px);
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+
+            to {
+                -webkit-transform: translateY(0);
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+
+
+
+        /* Fix for text rendering */
+        body {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
+            font-family: 'Noto Sans', sans-serif; 
+            color: black;
+            background-color: #f2f2f6;
+
+        }
+
+        /* Apply animations to elements */
+        .page {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem;
+            background-color: #ffffff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+ 
+            
+        }
+
+        .container h2 {
+            font-size: 1.5rem;
+    color: #333;
+    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: .1rem;
+    word-spacing: .2rem; 
+        }
+
+        .main-content {
+            margin-left: 250px;
+            /* Offset for the sidebar width */
+            padding: 1rem;
+            /* Padding for content */
+            background-color: #f2f2f6;
+            /* Light background for contrast */
+            min-height: 100vh;
+            /* Ensure it covers the viewport height */
+            transition: all 0.3s ease;
+        }
+            .main-content.collapsed {
+            margin-left: 70px;
+        }
+
+       
+
+        .button-container {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        button {
+            
+            background-color: #0051d1;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            min-width: 120px;
+        }
+
+        button:hover {
+            background-color: #447bd4;
+            transform: translateY(-1px);
+            box-shadow: var(--shadow);
+        }
+
+        button:disabled {
+            background-color: var(--text-secondary);
+            cursor: not-allowed;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            margin-bottom: 0.5rem;
+            color: black;
+            font-weight: 500;
+        }
+
+       
+        select {
+            width: 100%;
+            padding: 12px;
+            padding: 0.75rem;
+            border: 2px solid var(--border);
+            border-radius: var(--radius);
+            -webkit-transition: var(--transition);
+            transition: var(--transition);
+            font-size: 16px;
+            font-size: 1rem;
+        }
+
+        
+        select:focus {
+            outline: none;
+            border-color: black;
+            box-shadow: 0 0 0 3px rgba(51, 52, 57, 0.15);
+        }
+
+
+
+@media print {
+ .table, .table__body {
+  overflow: visible;
+  height: auto !important;
+  width: auto !important;
+ }
+}
+
+/*@page {
+    size: landscape;
+    margin: 0; 
+}*/
+
+
+
+main.table {
+    width: 82vw;
+    height: 90vh;
+    background-color: #f2f2f6;
+-webkit-backdrop-filter: blur(7px);
+    backdrop-filter: blur(7px);
+    box-shadow: 0 .4rem .8rem #0005;
+    border-radius: .8rem;
+    overflow: hidden;
+}
+
+.table__header {
+    width: 100%;
+    height: 10%;
+    padding: 1rem 1rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+
+}
+
+.table__header h1 {
+    font-size: 1.5rem;
+    color: #333;
+    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: .1rem;
+    word-spacing: .2rem;    
+}
+
+
+.table__header .input-group {
+    width: 20%;
+    height: 100%;
+    background-color: #e3e2e9;
+    border-radius: 2rem;
+    margin-left: 28rem;
+    display: flex;
+    transition: width 0.2s ease, box-shadow 0.2s ease; /* Smooth transitions */
+    position: relative; /* Necessary for positioning the search icon */
+    
+}
+
+.table__header .input-group input {
+    width: 100%;
+    height: 100%;
+    background-color: #e3e2e9;
+    border-radius: 2rem;
+    padding: 0.5rem 1rem; /* Adjust padding */
+    border: none;
+    outline: none;
+    font-size: 1rem;
+    transition: background-color 0.2s ease; /* Smooth color transition */
+}
+
+.table__header .input-group input:focus {
+    background-color: #d9d8e2; /* Change background when focused */
+}
+
+.table__header .input-group:hover {
+    width: 35%; /* Increase width on hover */
+    box-shadow: 0 0.1rem 0.4rem #0002; /* Add hover shadow */
+}
+
+.table__header .input-group .fa-search {
+    background-color: transparent;
+    position: absolute;
+    right: 1rem; /* Position icon on the right */
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1rem;
+    pointer-events: none; /* Prevent clicks on the icon */
+    transition: opacity 0.3s ease, transform 0.3s ease; /* Smooth fade and scale */
+}
+
+.table__header .input-group input:focus + .fa-search,
+.table__header .input-group input:not(:placeholder-shown) + .fa-search {
+    opacity: 0; /* Hide icon when typing or focused */
+    transform: scale(0.8); /* Optional shrink effect */
+}
+
+.input-group>:not(:first-child):not(.dropdown-menu):not(.valid-tooltip):not(.valid-feedback):not(.invalid-tooltip):not(.invalid-feedback) {
+    margin-left: calc(var(--bs-border-width) * -1); /* Bootstrap-related margin correction */
+    border-top-left-radius: 2rem;
+    border-bottom-left-radius: 2rem;
+}
+
+
+
+
+
+.table__body {
+    width: 95%;
+    max-height: calc(89% - 1.6rem);
+    margin: .8rem auto;
+    border-radius: .6rem;
+    overflow: auto;
+  
+}
+
+
+.table__body::-webkit-scrollbar{
+    width: 0.5rem;
+    height: 0.5rem;
+}
+
+.table__body::-webkit-scrollbar-thumb{
+    border-radius: .5rem;
+    background-color: #0004;
+    visibility: hidden;
+}
+
+.table__body:hover::-webkit-scrollbar-thumb{ 
+    visibility: visible;
+}
+
+
+table {
+    width: 100%;
+}
+
+
+table, th, td {
+    border-collapse: collapse;
+    padding: 1rem;
+    text-align: left;
+}
+
+thead th {
+    position: sticky;
+    top: 0;
+    left: 0;
+    background-color: #808284;  /* table header color */
+    cursor: pointer;
+    text-transform: capitalize;
+    color: white;
+    font-size: .9rem;
+    letter-spacing: .1rem;
+
+}
+
+table th:first-child{
+  border-radius:10px 0 0 0;
+}
+
+table th:last-child{
+  border-radius:0 10px 0 0;
+}
+
+tbody tr:nth-child(even) {
+    background-color: #ffffff;
+}
+
+tbody tr {
+    --delay: .1s;
+    transition: .5s ease-in-out var(--delay), background-color 0s;
+}
+
+tbody tr.hide {
+    opacity: 0;
+    transform: translateX(100%);
+    display: none; /* Hide the element completely from the layout */
+}
+
+
+tbody tr:hover {
+    background-color: #e3e2e9 !important;
+}
+
+
+
+tbody tr.hide td,
+tbody tr.hide td p {
+    padding: 0;
+    font: 0 / 0 sans-serif;
+    transition: .2s ease-in-out .5s;
+}
+
+
+@media (max-width: 1000px) {
+    td:not(:first-of-type) {
+        min-width: 12.1rem;
+    }
+}
+
+thead th span.icon-arrow {
+    display: inline-block;
+    width: 1.3rem;
+    height: 1.3rem;
+    border-radius: 50%;
+    border: 1.4px solid transparent;
+    text-align: center;
+    font-size: 1rem;
+    margin-left: .5rem;
+    transition: .2s ease-in-out;
+}
+
+thead th:hover span.icon-arrow{
+    border: 1.4px solid;    
+}
+
+thead th:hover {
+    color: #ffffff;
+    background-color: #9d9d9d;
+}
+
+thead th.active span.icon-arrow{
+    background-color: transparent;
+    color: #fff;
+}
+
+thead th.asc span.icon-arrow{
+    transform: rotate(180deg);
+}
+
+thead th.active,tbody td.active {
+    color: #ffffff;
+    background-color:#3b3c3c;
+}
+
+.export__file {
+    position: relative;
+}
+
+.export__file .export__file-btn {
+    display: inline-block;
+    width: 2.5rem; /* Adjust size of the icon container */
+    height: 2.5rem;
+    border-radius: 50%; /* Make the icon circular */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.2s ease-in-out;
+}
+
+.export__file .export__file-btn i {
+    font-size: 1.5rem; /* Adjust icon size */
+    color: #333; /* Icon color */
+    transition: 0.2s ease-in-out;
+}
+
+.export__file .export__file-btn i:hover {
+    transform: scale(1.15); /* Slight zoom effect */
+    cursor: pointer;
+    Color: #0051d1;
+}
+
+.export__file input {
+    display: none;
+}
+
+.export__file .export__file-options {
+    position: absolute;
+    right: 0;
+    margin-top: 0.5rem;
+    width: 12rem;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    text-align: center;
+    opacity: 0;
+    transform: scale(0.8);
+    transform-origin: top right;
+    box-shadow: 0 0.2rem 0.5rem #0004;
+    transition: 0.2s ease-in-out;
+}
+
+.export__file input:checked + .export__file-options {
+    opacity: 1;
+    transform: scale(1);
+    z-index: 100;
+}
+
+.export__file .export__file-options label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 0.6rem 1rem;
+    background-color: #f2f2f2;
+    font-size: 1rem;
+
+    transition: 0.2s ease-in-out;
+}
+
+.export__file .export__file-options label:first-of-type {
+    padding: 1rem;
+    
+}
+
+.export__file .export__file-options label:hover {
+    background-color: #f2f2f6; /* Lighter background on hover */
+    transform: scale(1.05); /* Zoom effect */
+    cursor: pointer;
+}
+
+.export__file .export__file-options i {
+    font-size: 1.25rem; /* Adjust Font Awesome icon size */
+    color: #444; /* Icon color */
+    margin-left: 0.5rem;
+}
+
+.export__file .export__file-options label:hover i {
+    color: #0051d1; /* Change icon color on hover */
+}
+
+
+
+/* Resize handle styling */
+.resize-handle {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 5px;
+    height: 100%;
+    cursor: col-resize;
+    background: transparent;
+}
+
+
+#paginationControls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px; /* Space between pagination buttons */
+    margin: 20px 0;
+  
+}
+
+#paginationControls button {
+    background-color: #f0f0f0; /* Default background color */
+    color: #333; /* Default text color */
+    border: 1px solid #ccc; /* Border color */
+    border-radius: 4px; /* Rounded corners */
+    padding: 8px 12px; /* Padding for buttons */
+    font-size: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease; /* Smooth transitions for hover effects */
+    width: 40px !important;
+    min-width: 20px !important;
+}
+
+#paginationControls button:hover {
+    background-color: #447bd4; /* Hover background color */
+    color: #fff; /* Hover text color */
+    border-color:  #5e89cd; /* Hover border color */
+}
+
+#paginationControls button:disabled {
+    background-color: #e0e0e0; /* Disabled background color */
+    color: #888; /* Disabled text color */
+    cursor: not-allowed; /* Show not-allowed cursor on hover */
+    border-color: #ccc;
+}
+
+#paginationControls button.current {
+    background-color: #447bd4; /* Active page background color */
+    color: #fff; /* Active page text color */
+    border-color: #447bd4; /* Active page border color */
+    font-weight: bold;
+}
+
+#paginationControls button.current:hover {
+    background-color: #0056b3; /* Hover effect for active page */
+    border-color: #447bd4; 
+}
+
+
+
+.message {
+  padding: 10px;
+  margin: 10px 0;
+  display: none;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.message.info {
+  background-color: #d9edf7;
+  color: #31708f;
+}
+
+.message.success {
+  background-color: #dff0d8;
+  color: #3c763d;
+}
+
+.message.error {
+  background-color: #f2dede;
+  color: #a94442;
+}
+
+.message.show {
+  display: block;
+}
+
+.alert {
+  display: none;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.alert.show {
+  display: block;
+}
+
+.alert.info {
+  background-color: #d9edf7;
+  color: #31708f;
+}
+
+.alert.success {
+  background-color: #dff0d8;
+  color: #3c763d;
+}
+
+.alert.error {
+  background-color: #f2dede;
+  color: #a94442;
+}
+
+
+/* Fade-in animation */
+.alert.show {
+  display: block;
+  opacity: 0;
+  animation: fadeIn 0.5s forwards;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+ #loading-row td {
+    font-size: 16px;
+    font-weight: bold;
+    color: #555;
+    animation: fadeIn 1s infinite;
+  }
+
+  
+
+.loading-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+       
+.pl {
+  width: 3em;
+  height: 3em;
+}
+
+.pl__ring {
+  animation: ringA 2s linear infinite;
+}
+
+.pl__ring--a {
+  stroke: #f42f25;
+}
+
+.pl__ring--b {
+  animation-name: ringB;
+  stroke: #f49725;
+}
+
+.pl__ring--c {
+  animation-name: ringC;
+  stroke: #255ff4;
+}
+
+.pl__ring--d {
+  animation-name: ringD;
+  stroke: #f42582;
+}
+
+/* Animations */
+@keyframes ringA {
+  from, 4% {
+    stroke-dasharray: 0 660;
+    stroke-width: 20;
+    stroke-dashoffset: -330;
+  }
+
+  12% {
+    stroke-dasharray: 60 600;
+    stroke-width: 30;
+    stroke-dashoffset: -335;
+  }
+
+  32% {
+    stroke-dasharray: 60 600;
+    stroke-width: 30;
+    stroke-dashoffset: -595;
+  }
+
+  40%, 54% {
+    stroke-dasharray: 0 660;
+    stroke-width: 20;
+    stroke-dashoffset: -660;
+  }
+
+  62% {
+    stroke-dasharray: 60 600;
+    stroke-width: 30;
+    stroke-dashoffset: -665;
+  }
+
+  82% {
+    stroke-dasharray: 60 600;
+    stroke-width: 30;
+    stroke-dashoffset: -925;
+  }
+
+  90%, to {
+    stroke-dasharray: 0 660;
+    stroke-width: 20;
+    stroke-dashoffset: -990;
+  }
+}
+
+@keyframes ringB {
+  from, 12% {
+    stroke-dasharray: 0 220;
+    stroke-width: 20;
+    stroke-dashoffset: -110;
+  }
+
+  20% {
+    stroke-dasharray: 20 200;
+    stroke-width: 30;
+    stroke-dashoffset: -115;
+  }
+
+  40% {
+    stroke-dasharray: 20 200;
+    stroke-width: 30;
+    stroke-dashoffset: -195;
+  }
+
+  48%, 62% {
+    stroke-dasharray: 0 220;
+    stroke-width: 20;
+    stroke-dashoffset: -220;
+  }
+
+  70% {
+    stroke-dasharray: 20 200;
+    stroke-width: 30;
+    stroke-dashoffset: -225;
+  }
+
+  90% {
+    stroke-dasharray: 20 200;
+    stroke-width: 30;
+    stroke-dashoffset: -305;
+  }
+
+  98%, to {
+    stroke-dasharray: 0 220;
+    stroke-width: 20;
+    stroke-dashoffset: -330;
+  }
+}
+
+@keyframes ringC {
+  from {
+    stroke-dasharray: 0 440;
+    stroke-width: 20;
+    stroke-dashoffset: 0;
+  }
+
+  8% {
+    stroke-dasharray: 40 400;
+    stroke-width: 30;
+    stroke-dashoffset: -5;
+  }
+
+  28% {
+    stroke-dasharray: 40 400;
+    stroke-width: 30;
+    stroke-dashoffset: -175;
+  }
+
+  36%, 58% {
+    stroke-dasharray: 0 440;
+    stroke-width: 20;
+    stroke-dashoffset: -220;
+  }
+
+  66% {
+    stroke-dasharray: 40 400;
+    stroke-width: 30;
+    stroke-dashoffset: -225;
+  }
+
+  86% {
+    stroke-dasharray: 40 400;
+    stroke-width: 30;
+    stroke-dashoffset: -395;
+  }
+
+  94%, to {
+    stroke-dasharray: 0 440;
+    stroke-width: 20;
+    stroke-dashoffset: -440;
+  }
+}
+
+@keyframes ringD {
+  from, 8% {
+    stroke-dasharray: 0 440;
+    stroke-width: 20;
+    stroke-dashoffset: 0;
+  }
+
+  16% {
+    stroke-dasharray: 40 400;
+    stroke-width: 30;
+    stroke-dashoffset: -5;
+  }
+
+  36% {
+    stroke-dasharray: 40 400;
+    stroke-width: 30;
+    stroke-dashoffset: -175;
+  }
+
+  44%, 50% {
+    stroke-dasharray: 0 440;
+    stroke-width: 20;
+    stroke-dashoffset: -220;
+  }
+
+  58% {
+    stroke-dasharray: 40 400;
+    stroke-width: 30;
+    stroke-dashoffset: -225;
+  }
+
+  78% {
+    stroke-dasharray: 40 400;
+    stroke-width: 30;
+    stroke-dashoffset: -395;
+  }
+
+  86%, to {
+    stroke-dasharray: 0 440;
+    stroke-width: 20;
+    stroke-dashoffset: -440;
+  }
+}
+
+
+
+
+
+/* Stats Grid Container */
+.stats-grid {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    padding: 1rem;
+    width: 100%;
+    max-width: 1400px;
+    margin: 1rem auto;
+    flex-wrap: wrap;
+}
+
+/* Individual Stat Card */
+.stat-card {
+    width: calc(33.333% - 1rem);
+    min-width: 220px;
+    max-width: 300px;
+    flex: 0 0 auto;
+    background: var(--surface);
+    border: 1px solid var(--border-color); /* Flat border */
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--shadow); /* Subtle shadow */
+    transition: transform 0.3s var(--transition-timing), box-shadow 0.3s var(--transition-timing);
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-hover);
+}
+
+/* Card Content */
+.stat-value {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: white; /* Neutral or dark text color */
+    margin: 0.5rem 0;
+    line-height: 1.2;
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum";
+    text-shadow: var(--shadow); /* Subtle shadow */
+}
+
+.stat-title {
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: white;
+    font-weight: 600;
+    margin-top: 0.5rem;
+    text-shadow: var(--shadow); /* Subtle shadow */
+
+}
+
+.stat-description {
+    color: white;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    margin-top: 0.5rem;
+    text-shadow: var(--shadow); /* Subtle shadow */
+
+}
+
+/* Themed Cards */
+.stat-card.total-reports {
+    border-color: #006ed3;
+    background-color: #006ed3;
+}
+
+.stat-card.today-reports {
+    border-color: #ff993a;
+    background-color: #ff993a;
+}
+
+.stat-card.total-teachers {
+    border-color: #ffd043;
+    background-color: #ffd043;
+}
+
+.stat-card.total-students {
+    border-color: #8ac53e;
+    background-color: #8ac53e;
+}
+
+
+
+/* Keyframe Animations */
+@keyframes cardSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive Design */
+@media screen and (max-width: 1200px) {
+    .stat-card {
+        width: calc(50% - 1rem);
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .stats-grid {
+        padding: 1rem;
+    }
+    .stat-card {
+        width: 100%;
+        max-width: none;
+    }
+    .stat-value {
+        font-size: 2rem;
+    }
+}
+
+@media (prefers-contrast: more) {
+    .stat-card {
+        border-color: var(--high-contrast-border);
+        background-color: var(--high-contrast-bg);
+    }
+    .stat-title,
+    .stat-description {
+        color: var(--text);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .stat-card {
+        animation: none;
+        transition: none;
+    }
+}
+
+
+
+      /* Sidebar Base Styles */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 250px;
+    background: var(--surface);
+    padding: 1.5rem 1rem;
+    border-right: 1px solid var(--border);
+    overflow-y: auto; 
+    z-index: 1000;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.sidebar.collapsed {
+    width: 80px;
+    padding: 1.5rem 0.5rem;
+
+}
+
+.main-content.collapsed {
+    margin-left: 80px; /* Adjust according to collapsed sidebar width */
+}
+
+
+
+.sidebar::-webkit-scrollbar {
+            width: 6px;
+        }
+.sidebar::-webkit-scrollbar-thumb {
+            background-color: #ccc;
+            border-radius: 3px;
+}
+
+.sidebar-toggle {
+            position: absolute;
+            top: 1rem;
+            background: none;
+            border: none;
+            border-radius: none;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: none;
+            z-index: 1001;
+            color: var(--text-secondary);
+            
+        }
+
+ .sidebar-toggle:hover {
+  background: none !important; /* Remove hover background */
+  color: #0051d1 !important;   /* Keep the text color unchanged */
+  box-shadow: none !important; /* Remove hover shadow */
+}
+
+
+
+.sidebar-toggle i {
+font-size: 30px;
+}
+   
+       .sidebar-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 2rem;
+            margin-top: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .collapsed .sidebar-header {
+          transition: all 0.3s ease;
+            padding-bottom: 1rem;
+
+
+
+        }
+
+        .logo {
+            width: 160px;
+            height: 160px;
+            transition: all 0.3s ease;
+        }
+
+        .collapsed .logo {
+            width: 80px;
+            height: 80px;
+        }
+
+        .sidebar-header h1 {
+            transition: all 0.3s ease;
+            white-space: wrap;
+            overflow: hidden;
+            font-size:20px;
+            
+        }
+
+        .collapsed .sidebar-header h1 {
+            display: none;
+        }
+
+        /* Navigation Links */
+        .nav-links {
+            list-style: none;
+            padding: 0;
+            margin: 0;  
+            
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            margin-bottom: 0.55rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: var(--radius);
+            transition: var(--transition-duration) var(--transition-timing);
+            width: 100%;
+            border: none;
+            background: none;
+            cursor: pointer;
+            text-align: left;
+            font-size: 1rem;
+            position: relative;
+            outline: none;
+            font-weight: 500;
+        }
+
+
+
+
+
+
+        .nav-link span {
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .collapsed .nav-link span {
+            display: none;
+        }
+
+        .nav-link:hover {
+            background-color: rgba(37, 99, 235, 0.1);
+            color: #0051d1;
+            box-shadow: 0 2px 4px rgba(44, 103, 230, 0.2);
+    width: auto; /* Allow it to fit only content */
+    
+
+      
+        }
+
+        .nav-link i {
+            min-width: 20px;
+            transition: all 0.3s ease;
+            margin-left: 5px;
+        }
+
+        
+
+        .nav-link.active {
+    background-color: #0051d1;
+    color: white;
+    font-weight: 300;
+    box-shadow: 0 2px 4px rgba(44, 103, 230, 0.2);
+    width: auto; /* Allow it to fit only content */
+
+}
+
+.sidebar.collapsed .nav-link.active i {
+    background-color: #0051d1; /* Add background specifically to the icon */
+    color: white; /* Ensure icon stands out */
+    width: auto; /* Allow it to fit only content */
+    margin-left: 5px;
+}
+
+        .nav-link.active i {
+            transform: scale(1.1);
+        }
+
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #0051d1;
+            border-radius: var(--radius);
+            opacity: 0;
+            transition: opacity var(--transition-duration) var(--transition-timing);
+            z-index: -1;
+        }
+
+        .nav-link:focus-visible {
+            outline: 2px solid var(--primary);
+            outline-offset: 2px;
+        }
+
+
+
+/* Submenu Styles */
+.submenu {
+    list-style: none;
+    padding-left: 1.5rem; /* Indent submenu items */
+    margin: 0;
+    display: none; /* Initially hidden */
+    transition: all 0.3s ease;
+}
+
+.submenu li {
+    margin-top: 0.5rem;
+}
+
+.submenu .nav-link {
+    font-size: 0.9rem;
+    padding-left: 1rem; /* Additional indent */
+   
+    text-decoration: none;
+    border-radius: 4px;
+}
+
+.submenu .nav-link:hover {
+    background-color: rgba(37, 99, 235, 0.1);
+    color: var(--primary);
+}
+
+/* Arrow Icon for Submenu */
+.submenu-arrow {
+    margin-left: auto; /* Push arrow to the right */
+    transition: transform 0.3s ease;
+}
+
+/* Rotate arrow when submenu is open */
+.submenu-open .submenu-arrow {
+    transform: rotate(180deg);
+}
+
+/* Adjust submenu behavior for collapsed sidebar */
+.sidebar.collapsed .submenu {
+    display: none; /* Hide submenu when sidebar is collapsed */
+    padding-left: 0; /* Remove indentation */
+}
+
+.sidebar.collapsed .submenu .nav-link {
+    font-size: 0; /* Hide text in collapsed state */
+    padding-left: 0; /* Remove additional padding */
+}
+
+/* Arrow visibility in collapsed sidebar */
+.sidebar.collapsed .submenu-arrow {
+    display: none; /* Hide arrows completely */
+}
+
+/* Transition submenu height for smooth collapse/expand effect */
+.submenu {
+    overflow: hidden; /* Prevent text overflow */
+    height: 0; /* Default to collapsed height */
+}
+
+.submenu-open {
+    height: auto; /* Expand submenu when open */
+    display: block;
+}
+
+/* Prevent misalignment of submenu items in collapsed state */
+.sidebar.collapsed .submenu li {
+    margin: 0; /* Remove extra margin */
+}
+
+.submenu i {
+            min-width: 20px;
+            transition: all 0.3s ease;
+            margin-left: 5px;
+        }
+
+        
+.sidebar.collapsed .submenu.active i {
+    background-color: #0051d1; /* Add background specifically to the icon */
+    color: white; /* Ensure icon stands out */
+    width: auto; /* Allow it to fit only content */
+    margin-left: 5px;
+}
+
+        .submenu.active i {
+            transform: scale(1.1);
+        }
+
+
+
+        .checkbox-group {
+          display: flex;
+          gap: 5rem;
+          flex-direction: row;
+        }
+
+        .checkbox-group label {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          cursor: pointer;
+        }
+
+
+  .checkbox-wrapper-34 {
+    --blue: #0D7EFF;
+    --g08: #E1E5EB;
+    --g04: #848ea1;
+  }
+
+  .checkbox-wrapper-34 .tgl {
+    display: none;
+  }
+  .checkbox-wrapper-34 .tgl,
+  .checkbox-wrapper-34 .tgl:after,
+  .checkbox-wrapper-34 .tgl:before,
+  .checkbox-wrapper-34 .tgl *,
+  .checkbox-wrapper-34 .tgl *:after,
+  .checkbox-wrapper-34 .tgl *:before,
+  .checkbox-wrapper-34 .tgl + .tgl-btn {
+    box-sizing: border-box;
+  }
+  .checkbox-wrapper-34 .tgl::selection,
+  .checkbox-wrapper-34 .tgl:after::selection,
+  .checkbox-wrapper-34 .tgl:before::selection,
+  .checkbox-wrapper-34 .tgl *::selection,
+  .checkbox-wrapper-34 .tgl *:after::selection,
+  .checkbox-wrapper-34 .tgl *:before::selection,
+  .checkbox-wrapper-34 .tgl + .tgl-btn::selection {
+    background: none;
+  }
+  .checkbox-wrapper-34 .tgl + .tgl-btn {
+    outline: 0;
+    display: block;
+    width: 57px;
+    height: 27px;
+    position: relative;
+    cursor: pointer;
+    -webkit-user-select: none;
+    user-select: none;
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 1;
+    color: #fff;
+  }
+  .checkbox-wrapper-34 .tgl + .tgl-btn:after,
+  .checkbox-wrapper-34 .tgl + .tgl-btn:before {
+    position: relative;
+    display: block;
+    content: "";
+    width: 44%;
+    height: 100%;
+  }
+  .checkbox-wrapper-34 .tgl + .tgl-btn:after {
+    left: 0;
+  }
+  .checkbox-wrapper-34 .tgl + .tgl-btn:before {
+    display: inline;
+    position: absolute;
+    top: 7px;
+  }
+  .checkbox-wrapper-34 .tgl:checked + .tgl-btn:after {
+    left: 56.5%;
+  }
+
+  .checkbox-wrapper-34 .tgl-ios + .tgl-btn {
+    background: #f2f2f6;
+    border-radius: 20rem;
+    padding: 2px;
+    transition: all 0.4s ease;
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1);
+  }
+  .checkbox-wrapper-34 .tgl-ios + .tgl-btn:after {
+    border-radius: 2em;
+    background: #fff;
+    transition: left 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), padding 0.3s ease, margin 0.3s ease;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+  }
+  .checkbox-wrapper-34 .tgl-ios + .tgl-btn:before {
+    content: "No";
+    left: 30px;
+    color: var(--g04);
+    transition: left 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+  .checkbox-wrapper-34 .tgl-ios + .tgl-btn:active {
+    box-shadow: inset 0 0 0 30px rgba(0, 0, 0, 0.1);
+  }
+  .checkbox-wrapper-34 .tgl-ios + .tgl-btn:active:after {
+    padding-right: 0.4em;
+  }
+  .checkbox-wrapper-34 .tgl-ios:checked + .tgl-btn {
+    background: #8ac53e;
+  }
+  .checkbox-wrapper-34 .tgl-ios:checked + .tgl-btn:active {
+    box-shadow: inset 0 0 0 30px rgba(0, 0, 0, 0.1);
+  }
+  .checkbox-wrapper-34 .tgl-ios:checked + .tgl-btn:active:after {
+    margin-left: -0.4em;
+  }
+  .checkbox-wrapper-34 .tgl-ios:checked + .tgl-btn:before {
+    content: "Yes";
+    left: 6px;
+    color: #fff;
+  }
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+    background-color: #fff;
+    margin: 15% auto;
+    padding: 20px;
+    border-radius: 10px;
+    width: 25%;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.modal .close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.modal .close:hover,
+.modal .close:focus {
+    color: red;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+
+.popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.popup-content {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    max-width: 400px;
+    width: 90%;
+}
+
+.popup-content h3 {
+    margin-bottom: 15px;
+}
+
+.popup-content button {
+    margin: 5px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+.popup-content .btn-primary {
+    background-color: #0051d1;
+    color: white;
+}
+
+.popup-content .btn-secondary {
+    background-color: #6c757d;
+    color: white;
+}
+
+.popup-content .btn-danger {
+    background-color: #d9534f;
+    color: white;
+}
+
+
+
+ .showingToday button {
+  background: none !important; /* Remove hover background */
+}
+
+
+.showingToday button {
+            background-color: #0051d1 !important;
+            color: white !important;
+            border: none !important;
+            padding: 0.75rem 1.5rem !important;
+            border-radius: var(--radius) !important;
+            font-weight: 600 !important;
+            cursor: pointer !important;
+            transition: var(--transition) !important;
+            min-width: 120px !important;
+        }
+
+        .showingToday button:hover {
+            background-color: #3c8be6b3 !important;
+            transform: translateY(-1px) !important;
+            box-shadow: var(--shadow)  !important;
+            color: white !important;
+        }
+
+
+/* Style for the input field */
+#studentNumber {
+  padding: 8px 12px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  outline: none;
+  margin-right: 10px;
+  width: 250px;
+  transition: border-color 0.3s ease;
+}
+
+#studentNumber:focus {
+  border-color: #447bd4;
+}
+
+/* Style for the Lookup button */   
+#lookupButton {
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 12px;
+  font-size: 14px;
+  cursor: pointer;
+  align-items: center;
+  gap: 8px;
+  transition: background-color 0.3s ease;
+}
+
+#lookupButton i {
+  font-size: 16px;
+}
+
+#pickedByField input {
+padding: 5px 12px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  outline: none;
+  width: 300px;
+  transition: border-color 0.3s ease;
+}
+
+#pickedByField input:focus {
+  border-color: #0051d1;
+}
+
+#attendanceForm {
+    width: 60%;
+    margin: 0 auto;
+    padding: 20px;
+    border-radius: 5px;
+    margin-top: 20px;
+}
+
+
+////////////////// Attendance Page \\\\\\\\\\\\\\\\\\
+
+
+
+  .attendance-container {
+      max-width: 1200px;
+      margin: auto;
+    }
+    .chart-container {
+      width: 100%;
+      max-width: 600px;
+      margin: 20px auto;
+    }
+    .attendance-container .buttons {
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    .attendance-container table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+    .attendance-container table, th, td {
+      border: 1px solid #ddd;
+    }
+    .attendance-container th, td {
+      padding: 10px;
+      text-align: left;
+    }
+    .attendance-container th {
+      background-color: #f4f4f4;
+    }
+    #reportTables > div {
+      display: none;
+    }
+    #reportOverall {
+      display: block;
+    }
+
+////////////// End Attendance Page \\\\\\\\\\\\
+    </style>
+</head>
+<body>
+<main class="main-content">
+    <div class="container">
+        <nav class="sidebar">
+            <div class="sidebar-header">
+            <!-- Sidebar Toggle Button -->
+            <button class="sidebar-toggle" onclick="toggleSidebar()" aria-expanded="true" aria-label="Toggle Sidebar">
+                <i class="fas fa-bars"></i>
+            </button>
+            <!-- Sidebar Logo -->
+            <img src="https://lh3.googleusercontent.com/d/1w9vafFmqzZfgtG0s_ZIku9puKTIV2Nep" alt="School Logo" class="logo">
+            </div>
+            
+            <!-- Sidebar Navigation Links -->
+            <ul class="nav-links">
+            <!-- Home Page -->
+                  <li>
+                    <a class="nav-link active" data-page="homePage">
+                        <i class="fas fa-home"></i>
+                        <span>Home</span>
+                    </a>
+                </li>
+            
+            <!-- Add Data Section with Submenu -->
+            <li>
+              <a class="nav-link" onclick="toggleSubmenu('addDataSubmenu')" data-page="recStaticsPage">
+                <i class="bi bi-building-fill"></i>
+                  <span>Reception</span>
+                  <i class="fas fa-chevron-down submenu-arrow"></i>
+              </a>
+              <ul class="submenu" id="addDataSubmenu">
+                  <li>
+                      <a class="nav-link" data-page="addPassPage">
+                          <i class="fas fa-plus-circle"></i>
+                          Add
+                      </a>
+                  </li>
+                  <li>
+                      <a class="nav-link" data-page="viewDashboardPage">
+                          <i class="fas fa-table"></i>
+                          Dashboard
+                      </a>
+                  </li>
+              </ul>
+            </li>
+            <li>
+              <a class="nav-link" onclick="toggleSubmenu('attendanceSubmenu')" data-page="attendancePage">
+                <i class="bi bi-building-fill"></i>
+                  <span>Attendance</span>
+                  <i class="fas fa-chevron-down submenu-arrow"></i>
+              </a>
+              <ul class="submenu" id="attendanceSubmenu">
+                  <li>
+                      <a class="nav-link" data-page="attendanceReportPage">
+                          <i class="fas fa-plus-circle"></i>
+                          Attendance reports
+                      </a>
+                  </li>
+              </ul>
+            </li>
+            
+            <!-- Logout -->
+            <li>
+                <a class="nav-link" id="logoutButton">
+                    <i class="fa fa-sign-out"></i>
+                    <span>Logout</span>
+                </a>
+            </li>
+            </ul>
+            </nav>
+            
+   <!-- Home Page -->
+   <div id="homePage" class="page">
+                <h2 class="text-2xl font-bold mb-6">Welcome Home</h2>
+
+   </div>
+
+   <!-- Statics Page -->
+            <div id="recStaticsPage" class="page">
+                <h2 class="text-2xl font-bold mb-6">Data Statistics</h2>
+                <br>
+                <!-- Statistics Grid -->
+                <div class="stats-grid">
+                    <div class="stat-card total-reports">
+                        <div class="stat-title">Total Records</div>
+                        <div class="stat-value" id="totalRecords">0</div>
+                        <div class="stat-description">All-Time Data</div>
+                    </div>
+                    <div class="stat-card total-students">
+                        <div class="stat-title">Today's Records</div>
+                        <div class="stat-value" id="todayRecords">0</div>
+                        <div class="stat-description">Number Of Data Added Today</div>
+                    </div>
+                    <div class="stat-card total-reports">
+                        <div class="stat-title">Today Bus Students</div>
+                        <div class="stat-value" id="earlyDismissalBus">0</div>
+                        <div class="stat-description">Number Of Bus Students</div>
+                    </div>
+                    <div class="stat-card total-teachers">
+                        <div class="stat-title">Today Car Students</div>
+                        <div class="stat-value" id="earlyDismissalCar">0</div>
+                        <div class="stat-description">Number Of Car Students</div>
+                    </div>
+                
+                    <div class="stat-card today-reports">
+                        <div class="stat-title">Today Late Arrival</div>
+                        <div class="stat-value" id="todayLate">0</div>
+                        <div class="stat-description">Number Of Late Arrival</div>
+                    </div>
+                    <div class="stat-card total-teachers">
+                        <div class="stat-title">Today Early Dismissal</div>
+                        <div class="stat-value" id="todayEarly">0</div>
+                        <div class="stat-description">Number Of Early Dismissal</div>
+                    </div>
+                </div>
+            </div>
+  
+
+
+            <div class="loading-container">
+                <div id="loadingIndicator" class="loader">
+                    <svg class="pl" width="240" height="240" viewBox="0 0 240 240">
+                        <circle class="pl__ring pl__ring--a" cx="120" cy="120" r="105" fill="none" stroke="#000" stroke-width="20" stroke-dasharray="0 660" stroke-dashoffset="-330" stroke-linecap="round"></circle>
+                        <circle class="pl__ring pl__ring--b" cx="120" cy="120" r="35" fill="none" stroke="#000" stroke-width="20" stroke-dasharray="0 220" stroke-dashoffset="-110" stroke-linecap="round"></circle>
+                        <circle class="pl__ring pl__ring--c" cx="85" cy="120" r="70" fill="none" stroke="#000" stroke-width="20" stroke-dasharray="0 440" stroke-linecap="round"></circle>
+                        <circle class="pl__ring pl__ring--d" cx="155" cy="120" r="70" fill="none" stroke="#000" stroke-width="20" stroke-dasharray="0 440" stroke-linecap="round"></circle>
+                    </svg>
+                </div>
+            </div>
+          
+            <!-- Alert Message -->
+            <div id="alertMessage" class="message"></div>
+
+<!-- Modal -->
+<div id="transportationModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <p id="transportationText">Detail: Unknown</p>
+    </div>
+</div>
+<div id="earlyDismissalModal" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <p id="pickedByText"></p>
+  </div>
+</div>
+
+ <!-- Attendance Page -->
+<div id="attendancePage" class="page" onload="loadGendersAttendance()">
+                <h1>Student Attendance</h1>
+                <label for="attendanceGenderplus">Gender:</label>
+                <select id="attendanceGenderplus" onchange="handleGenderChangeAttendance()"></select>
+
+                <label for="attendanceGradeplus">Grade:</label>
+                <select id="attendanceGradeplus" onchange="handleGradeChangeAttendance()" disabled></select>
+
+                <label for="attendanceClassplus">Class:</label>
+                <select id="attendanceClassplus" onchange="handleClassChangeAttendance()" disabled></select>
+
+                <!-- Fill In Dropdown and Button -->
+                <label for="attendance-statusplus">Fill All With:</label>
+                <select id="attendance-statusplus">
+                    <option value="P">P</option>
+                    <option value="UA">UA</option>
+                    <option value="AA">AA</option>
+                    <option value="L">L</option>
+                </select>
+                <button id="fill-inplus" onclick="fillAll()">Fill In</button>
+
+                <table id="attendance-tableplus" border="1">
+                    <thead>
+                        <tr>
+                            <th>Student Number</th>
+                            <th>Student Name</th>
+                            <!-- Period columns will be added dynamically with checkboxes -->
+                        </tr>
+                    </thead>
+                    <tbody id="attendanceStudents-table-bodyplus">
+                        <tr id="loading-rowplus" style="display: none;"></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <!-- Submit Button -->
+                <button id="submit-attendanceplus" onclick="submitAttendance()">Submit Attendance</button>
+            </div>
+
+ <!-- Attendance Report Page -->
+<div id="attendanceReportPage" class="page">
+  <h1>Attendance Reports</h1>
+
+    <div id="filterOptionsReporting">
+        <label for="genderFilterReporting">Gender:</label><select id="genderFilterReporting"><option value="">All</option></select>
+        <label for="gradeFilterReporting">Grade:</label><select id="gradeFilterReporting"><option value="">All</option></select>
+        <label for="classFilterReporting">Class:</label><select id="classFilterReporting"><option value="">All</option></select>
+    </div>
+
+    <div id="studentNumberInputReporting">
+        <label for="studentNumberReporting">Student Number:</label>
+        <input type="text" id="studentNumberReporting">
+        <button id="showReportByNumberReporting">Show Report</button>
+    </div>
+
+    <button id="displayReportButtonReporting" disabled>Display Report</button>
+    <label for="studentSelectReporting">Select Student:</label>
+    <select id="studentSelectReporting" disabled><option value="">-- Select a student --</option></select>
+
+    <div id="studentReportingContainer" style="display: none;">
+        <h2>Student Attendance Summary</h2>
+        <div id="studentChartContainerReporting" style="width:400px; height:400px;"><canvas id="studentChartReporting"></canvas></div>
+        <table id="studentTableReporting"><thead><tr><th>Status</th><th>Count</th></tr></thead><tbody></tbody></table>
+    </div>
+
+    <button id="loadAttendanceReportsReporting">Load Attendance Reports</button>
+    <div id="attendanceReportsReporting" style="display: none;">
+        <h2>Overall Attendance Reports</h2>
+
+        <label for="reportTypeReporting">Select Report:</label>
+        <select id="reportTypeReporting">
+            <option value="class">By Class</option>
+            <option value="grade">By Grade</option>
+            <option value="gender">By Gender</option>
+        </select>
+        <button id="displayOverallReportReporting">Display Report</button>
+
+        <div id="classReportContainerReporting" style="display: none;">
+            <h3>Attendance by Class</h3>
+            <table border="1" id="classReportReporting"><thead><tr><th>Class</th><th>Total</th><th>Present</th><th>Unauthorized Absence</th><th>Authorized Absence</th><th>Late</th><th>Total Absence</th></tr></thead><tbody></tbody></table>
+        </div>
+
+        <div id="gradeReportContainerReporting" style="display: none;">
+            <h3>Attendance by Grade</h3>
+            <table border="1" id="gradeReportReporting"><thead><tr><th>Grade</th><th>Total</th><th>Present</th><th>Unauthorized Absence</th><th>Authorized Absence</th><th>Late</th><th>Total Absence</th></tr></thead><tbody></tbody></table>
+        </div>
+
+        <div id="genderReportContainerReporting" style="display: none;">
+            <h3>Attendance by Gender</h3>
+            <table border="1" id="genderReportReporting"><thead><tr><thead><tr><th>Gender</th><th>Total</th><th>Present</th><th>Unauthorized Absence</th><th>Authorized Absence</th><th>Late</th><th>Total Absence</th></tr></thead><tbody></tbody></table>
+        </div>
+    </div>
+    </div>
+
+
+<!-- Add Pass Page -->
+            <div id="addPassPage" class="page" style="display: none;">
+    <h2>Student Tracker</h2>
+    <form id="attendanceForm" onsubmit="handleSubmit(event)">
+<div style="margin-bottom: 15px;">
+  <label for="studentNumber" style="font-weight: bold; margin-right: 10px;">Student Number:</label>
+  <input type="text" id="studentNumber" name="studentNumber" placeholder="Enter Student Number" />
+  <button type="button" id="lookupButton" onclick="lookupStudent()">
+    <i class="fas fa-search"></i> Lookup
+  </button>
+</div>
+      <div class="form-group">
+        <label for="gender">Gender:</label>
+        <select id="gender" name="gender" required onchange="handleGenderChange()">
+          <option value="">Select Gender</option>
+        </select>
+      </div>
+
+<div class="form-group">
+  <label for="grade">Grade:</label>
+  <select id="grade" onchange="handleGradeChange()" disabled>
+    <option value="">Select Grade</option>
+  </select>
+</div>
+      <div class="form-group">
+        <label for="class">Class:</label>
+        <select id="class" name="class" required disabled onchange="handleClassChange()">
+          <option value="">Select Class</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="student">Student:</label>
+        <select id="student" name="student" required disabled>
+          <option value="">Select Student</option>
+        </select>
+      </div>
+<div class="checkbox-group">
+      <div class="form-group">
+        <label for="isLate">Late Arrival:</label>
+          <div class="checkbox-wrapper-34">
+          <input class='tgl tgl-ios' type="checkbox" id="isLate" name="isLate">
+          <label class='tgl-btn' for='isLate'></label>
+          </div>
+      </div>
+
+      <div class="form-group">
+        <label for="isEarly">Early Dismissal:</label>
+        <div class="checkbox-wrapper-34">
+          <input class='tgl tgl-ios' type="checkbox" id="isEarly" name="isEarly">
+          <label class='tgl-btn' for='isEarly'></label>
+        </div>
+      </div>
+
+        <!-- Picked By field (initially hidden) -->
+        <div class="form-group">
+  <div id="pickedByField" style="display: none;">
+    <label for="pickedBy">Picked By:</label>
+    <input type="text" id="pickedBy" name="pickedBy" placeholder="Who picked the student">
+  </div>
+  </div>
+</div>
+  <button type="submit" id="submitButton">Submit</button>
+    </form>
+  </div>
+<!-- View Dashboard Page -->
+           <div id="viewDashboardPage" class="page" style="display: none;">
+
+            <div id="exportPopup" class="popup-overlay">
+    <div class="popup-content">
+        <h3>Select Export Option</h3>
+        <p>Do you want to export Today's Data or All Data?</p>
+        <button id="exportToday" class="btn btn-primary">Export Today's Data</button>
+        <button id="exportAll" class="btn btn-secondary">Export All Data</button>
+        <button id="cancelExport" class="btn btn-danger">Cancel</button>
+    </div>
+</div>
+
+
+ <div class="table" id="studentDataTable">
+        <section class="table__header">
+             <h1>View Dashboard</h1>
+            <div class="input-group">
+                    <i class="fas fa-search"></i>
+                <input id="searchInput" type="search" placeholder="Search Data...">
+            </div>
+            <div class="export__file">
+    <label for="export-file" class="export__file-btn" title="Export File">
+        <i class="fa-solid fa-file-export"></i>
+    </label>
+    <input type="checkbox" id="export-file">
+    <div class="export__file-options">
+        <label for="export-file" id="toEXCEL">
+            EXCEL <i class="fa-solid fa-file-excel"></i>
+        </label>
+    </div>
+</div>
+
+        </section>
+        <section class="table__body">
+<div class="showingToday">
+          <div id="controls">
+    <button id="toggleTodayData" class="btn active">Show Full Data</button>
+</div>
+</div>
+
+            <table id="studentDataTable">
+                <thead>
+        <tr>
+            <th>No<div class="resize-handle"></div><span class="icon-arrow">&UpArrow;</span></th>
+            <th>Gender<div class="resize-handle"></div><span class="icon-arrow">&UpArrow;</span></th>
+            <th>Name <div class="resize-handle"></div><span class="icon-arrow">&UpArrow;</span></th>
+            <th>Class <div class="resize-handle"></div><span class="icon-arrow">&UpArrow;</span></th>
+            <th>Transport <div class="resize-handle"></div><span class="icon-arrow">&UpArrow;</span></th>
+            <th>Late Arrival <div class="resize-handle"></div><span class="icon-arrow">&UpArrow;</span></th>
+            <th>LA Time <div class="resize-handle"></div><span class="icon-arrow">&UpArrow;</span></th>
+            <th>Early Dismiss <div class="resize-handle"></div><span class="icon-arrow">&UpArrow;</span></th>
+            <th>ED Time <div class="resize-handle"></div><span class="icon-arrow">&UpArrow;</span></th>
+            <th>Date <div class="resize-handle"></div><span class="icon-arrow">&UpArrow;</span></th>
+        </tr>
+                </thead>
+                <tbody>
+                </tbody>
+                
+            </table>
+           <nav id="paginationControls" pagination></nav>
+        </section>
+        </div>
+           </div>
+           </div>
+
+
+
+</div>
+</main>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1"></script>
+  <script>
+
+// Sidebar Toggle Functionality
+function toggleSidebar() {
+    const sidebar = document.querySelector('.sidebar');
+    const mainContent = document.querySelector('.main-content');
+    const toggleButton = document.querySelector('.sidebar-toggle');
+
+    if (sidebar && mainContent) {
+        sidebar.classList.toggle('collapsed');
+        mainContent.classList.toggle('collapsed');
+
+        // Update aria-expanded for accessibility
+        const isCollapsed = sidebar.classList.contains('collapsed');
+        localStorage.setItem('sidebarCollapsed', isCollapsed);
+        toggleButton.setAttribute('aria-expanded', !isCollapsed);
+    }
+}
+
+// Restore Sidebar State on Page Load
+document.addEventListener('DOMContentLoaded', function () {
+    const sidebar = document.querySelector('.sidebar');
+    const mainContent = document.querySelector('.main-content');
+    const toggleButton = document.querySelector('.sidebar-toggle');
+
+    if (sidebar && mainContent) {
+        const isCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+        if (isCollapsed) {
+            sidebar.classList.add('collapsed');
+            mainContent.classList.add('collapsed');
+            toggleButton.setAttribute('aria-expanded', 'false');
+        } else {
+            toggleButton.setAttribute('aria-expanded', 'true');
+        }
+    }
+
+    // Automatically collapse sidebar on smaller devices
+    autoCollapseSidebar();
+    window.addEventListener('resize', autoCollapseSidebar);
+});
+
+// Auto-collapse sidebar on small devices
+function autoCollapseSidebar() {
+    const sidebar = document.querySelector('.sidebar');
+    const mainContent = document.querySelector('.main-content');
+
+    if (sidebar && mainContent) {
+        if (window.innerWidth <= 768) {
+            sidebar.classList.add('collapsed');
+            mainContent.classList.add('collapsed');
+        } else {
+            const isCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+            if (!isCollapsed) {
+                sidebar.classList.remove('collapsed');
+                mainContent.classList.remove('collapsed');
+            }
+        }
+    }
+}
+
+
+// Toggle Submenu Visibility
+function toggleSubmenu(submenuId) {
+    const submenu = document.getElementById(submenuId);
+    const parentButton = submenu.previousElementSibling;
+
+    if (submenu) {
+        const isVisible = submenu.classList.contains('submenu-open');
+        submenu.classList.toggle('submenu-open', !isVisible);
+        parentButton.classList.toggle('submenu-open', !isVisible);
+    }
+}
+
+// Hide Submenus When Sidebar is Collapsed
+document.addEventListener('DOMContentLoaded', () => {
+    const sidebar = document.querySelector('.sidebar');
+    const submenus = document.querySelectorAll('.submenu');
+
+    function updateSubmenus() {
+        if (sidebar.classList.contains('collapsed')) {
+            submenus.forEach((submenu) => submenu.classList.remove('submenu-open'));
+        }
+    }
+
+    // Attach event listener to sidebar toggle
+    const sidebarToggle = document.querySelector('.sidebar-toggle');
+    sidebarToggle.addEventListener('click', updateSubmenus);
+});
+
+
+// Highlight the active nav-link and ensure submenus stay open for active items
+document.querySelectorAll('.nav-link').forEach((link) => {
+    link.addEventListener('click', () => {
+        document.querySelectorAll('.nav-link').forEach((item) => {
+            item.classList.remove('active');
+        });
+        link.classList.add('active');
+
+        // Open the submenu of the active item
+        const submenu = link.closest('.submenu');
+        if (submenu) {
+            submenu.style.display = 'block';
+            submenu.previousElementSibling.classList.add('submenu-open');
+        }
+    });
+});
+
+
+
+
+
+// Reception Page
+
+let debounceTimeout;
+
+const search = document.querySelector('.input-group input'),
+    table_rows = document.querySelectorAll('tbody tr'),
+    table_headings = document.querySelectorAll('thead th');
+
+// 1. Searching for specific data in the HTML table
+search.addEventListener('input', debounceSearch);
+
+function searchTable() {
+  const search_data = search.value.toLowerCase();  // Get search query in lowercase
+
+  table_rows.forEach((row, i) => {
+    let table_data = row.textContent.toLowerCase(); // Get row text content and convert to lowercase
+
+    // Toggle 'hide' class based on whether the search query matches row content
+    row.classList.toggle('hide', table_data.indexOf(search_data) < 0);
+
+    // Set a delay for each row's transition, so they animate one by one
+    row.style.setProperty('--delay', i / 25 + 's');
+  });
+
+  // Style alternating row colors for visible rows
+  document.querySelectorAll('tbody tr:not(.hide)').forEach((visible_row, i) => {
+    visible_row.style.backgroundColor = (i % 2 === 0) ? 'transparent' : '#0000000b';  // Alternating row colors
+  });
+}
+
+
+
+function filterDataset(search_data) {
+  // Filter dataset (if you're using a dataset like studentData)
+  const dataset = studentData.showingToday ? studentData.filteredData : studentData.data;
+
+  console.log("Searching in dataset:", dataset); // Debugging: Check the dataset
+
+  const filteredData = dataset.filter((student) => {
+    return Object.values(student).some((value) => {
+      const stringValue = value ? value.toString().toLowerCase() : '';
+      return stringValue.includes(search_data);
+    });
+  });
+
+  console.log("Filtered Data:", filteredData); // Debugging: Check filtered results
+
+  studentData.currentPage = 1; // Reset to the first page after filtering
+  studentData.paginateTable(filteredData); // Display filtered data
+}
+
+function debounceSearch() {
+  const search_data = search.value.toLowerCase();
+  clearTimeout(debounceTimeout); // Clear any previous timeout
+  debounceTimeout = setTimeout(() => {
+    searchTable(search_data);
+    filterDataset(search_data);
+  }, 300); // Adjust delay as needed
+}
+
+
+
+
+table_headings.forEach((head, i) => {
+    let sort_asc = true;
+    head.onclick = () => {
+        table_headings.forEach(head => head.classList.remove('active'));
+        head.classList.add('active');
+
+        document.querySelectorAll('td').forEach(td => td.classList.remove('active'));
+        table_rows.forEach(row => {
+            row.querySelectorAll('td')[i].classList.add('active');
+        })
+
+        head.classList.toggle('asc', sort_asc);
+        sort_asc = head.classList.contains('asc') ? false : true;
+
+        sortTable(i, sort_asc);
+    }
+})
+
+
+
+function sortTable(column, sort_asc) {
+    const dataset = studentData.showingToday ? studentData.filteredData : studentData.data;
+
+    dataset.sort((a, b) => {
+        const first_value = Object.values(a)[column]?.toString().toLowerCase() || '';
+        const second_value = Object.values(b)[column]?.toString().toLowerCase() || '';
+
+        if (first_value < second_value) return sort_asc ? -1 : 1;
+        if (first_value > second_value) return sort_asc ? 1 : -1;
+        return 0;
+    });
+
+    studentData.currentPage = 1; // Reset to the first page after sorting
+    studentData.paginateTable(dataset); // Redisplay sorted data
+}
+
+
+
+
+// Show the export popup
+document.querySelector('#toEXCEL').addEventListener('click', function () {
+    const popup = document.getElementById('exportPopup');
+    popup.style.display = 'flex'; // Show the popup
+});
+
+// Hide the popup when "Cancel" is clicked
+document.getElementById('cancelExport').addEventListener('click', function () {
+    const popup = document.getElementById('exportPopup');
+    popup.style.display = 'none'; // Hide the popup
+});
+
+// Handle "Export Today's Data"
+document.getElementById('exportToday').addEventListener('click', function () {
+    exportData(studentData.filteredData, 'TodaysData.xlsx');
+    closePopup();
+});
+
+// Handle "Export All Data"
+document.getElementById('exportAll').addEventListener('click', function () {
+    exportData(studentData.data, 'AllData.xlsx');
+    closePopup();
+});
+
+// Close the popup
+function closePopup() {
+    const popup = document.getElementById('exportPopup');
+    popup.style.display = 'none';
+}
+
+// Export data function
+function exportData(dataset, fileName) {
+    if (!dataset || dataset.length === 0) {
+        alert("No data available to export.");
+        return;
+    }
+
+    const workbook = XLSX.utils.book_new();
+    const headers = ['Number', 'Gender', 'Name', 'Class', 'Transportation', 'Picked By', 'Bus Number', 'Late Arrival', 'Late Time', 'Early Dismissal', 'Early Time', 'Date'];
+
+    const tableData = [headers];
+    dataset.forEach(student => {
+        tableData.push([
+            student.number,
+            student.gender,
+            student.name,
+            student.class,
+            student.transportation,
+            student.pickedBy || 'N/A',
+            student.busNumber || 'N/A',
+            student.lateArrival || 'No',
+            student.lateTime || 'N/A',
+            student.earlyDismissal || 'No',
+            student.earlyTime || 'N/A',
+            student.date
+        ]);
+    });
+
+    const worksheet = XLSX.utils.aoa_to_sheet(tableData);
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Student Data');
+    XLSX.writeFile(workbook, fileName);
+}
+
+
+const studentData = {
+    data: [], // Holds all student data
+    filteredData: [], // Holds today's filtered data
+    itemsPerPage: 5, // Number of rows per page
+    currentPage: 1, // Tracks the current page
+    showingToday: true, // Tracks whether today’s data is currently displayed
+
+    // Display data in the table
+    displayData: function (students) {
+        const tableBody = document.getElementById('studentDataTable').getElementsByTagName('tbody')[0];
+        tableBody.innerHTML = ''; // Clear existing table data
+
+        if (!students || students.length === 0) {
+            tableBody.innerHTML = '<tr><td colspan="11">No data available.</td></tr>';
+            return;
+        }
+
+        students.forEach(student => {
+            const row = document.createElement('tr');
+            const cells = [
+                student.number,
+                student.gender,
+                student.name,
+                student.class,
+                this.createTransportationCell(student.transportation, student.pickedBy, student.busNumber), // Custom cell for Transportation
+                student.lateArrival,
+                this.formatTime(student.lateTime),
+                this.createEarlyDismissalCell(student.earlyDismissal, student.pickedBy), // Custom cell for Early Dismissal
+                this.formatTime(student.earlyTime),
+                this.formatDate(student.date)
+                
+            ];
+
+            cells.forEach((cellContent, index) => {
+                const cell = document.createElement('td');
+
+                if (typeof cellContent === 'object') {
+                    // If cellContent is a DOM element (e.g., Transportation dropdown), append it directly
+                    cell.appendChild(cellContent);
+                } else {
+                    if (cellContent === 'N/A' || cellContent === null || cellContent === undefined || cellContent === '') {
+                        cell.innerHTML = '<i class="fas fa-times fa-xl" style="color: red;"></i>'; // Red X icon for empty values
+                    } else {
+                        cell.textContent = cellContent;
+
+                        // Highlight specific columns (lateArrival and earlyDismissal)
+                        if (index === 5 || index === 7) {
+                            if (cellContent === 'Yes') {
+                                cell.classList.add('highlight-green');
+                            } else if (cellContent === 'No') {
+                                cell.classList.add('highlight-red');
+                            }
+                        }
+                    }
+                }
+
+                row.appendChild(cell);
+            });
+
+            tableBody.appendChild(row);
+        });
+
+        // Attach click events for "Picked By", "Bus Number", and Early Dismissal modals
+        this.attachTransportationEvents();
+        this.attachEarlyDismissalEvents();
+    },
+
+
+// Filter data for today's date
+filterTodayData: function () {
+    const today = this.formatDate(new Date()); // Get today's date in dd/MM/yyyy format
+    this.filteredData = this.data.filter(student => student.date === today); // Filter today's data
+    this.currentPage = 1; // Reset to the first page
+    this.paginateTable(this.filteredData); // Display today's data
+},
+
+
+   toggleTodayData: function () {
+        this.showingToday = !this.showingToday; // Toggle the flag
+        const toggleButton = document.getElementById('toggleTodayData');
+
+        if (this.showingToday) {
+            this.filterTodayData(); // Show today’s data
+            toggleButton.textContent = 'Show Full Data';
+            toggleButton.classList.add('active');
+        } else {
+            this.currentPage = 1; // Reset to the first page
+            this.paginateTable(); // Show full data
+            toggleButton.textContent = 'Show Today Data';
+            toggleButton.classList.remove('active');
+        }
+    },
+
+
+    // Create a custom cell for the "Transportation" column
+    createTransportationCell: function (transportation, pickedBy, busNumber) {
+        const link = document.createElement('a');
+        link.href = '#';
+        link.classList.add('show-transportation');
+        link.dataset.transportationType = transportation;
+
+        if (transportation === 'Car') {
+            link.dataset.detail = pickedBy || 'Unknown';
+            link.textContent = 'Car';
+        } else if (transportation === 'Bus') {
+            link.dataset.detail = busNumber || 'Unknown Bus';
+            link.textContent = 'Bus';
+        } else {
+            link.textContent = transportation || 'N/A';
+        }
+
+        return link;
+    },
+
+ // Create a custom cell for the "Early Dismissal" column
+    createEarlyDismissalCell: function (earlyDismissal, pickedBy) {
+        if (earlyDismissal === 'Yes') {
+            const link = document.createElement('a');
+            link.href = '#';
+            link.classList.add('show-picked-by');
+            link.dataset.pickedBy = pickedBy || 'Unknown';
+            link.textContent = 'Yes';
+            return link;
+        }
+
+        return document.createTextNode(earlyDismissal || 'No');
+    },
+
+    // Attach events for "Picked By" and "Bus Number" modals
+    attachTransportationEvents: function () {
+        const modal = document.getElementById('transportationModal');
+        const transportationText = document.getElementById('transportationText');
+        const closeBtn = document.querySelector('.modal .close');
+
+        document.querySelectorAll('.show-transportation').forEach(link => {
+            link.addEventListener('click', function (e) {
+                e.preventDefault();
+                const transportationType = this.dataset.transportationType;
+                const detail = this.dataset.detail || 'Unknown';
+
+                // Set the modal text based on transportation type
+                if (transportationType === 'Car') {
+                    transportationText.textContent = `Picked By: ${detail}`;
+                } else if (transportationType === 'Bus') {
+                    transportationText.textContent = `Bus Number: ${detail}`;
+                } else {
+                    transportationText.textContent = `Detail: ${detail}`;
+                }
+
+                modal.style.display = 'block';
+            });
+        });
+
+        closeBtn.addEventListener('click', () => {
+            modal.style.display = 'none';
+        });
+
+        window.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+    },
+
+    // Attach events for Early Dismissal "Picked By" modal
+attachEarlyDismissalEvents: function () {
+    // Select the modal and its elements
+    const modal = document.getElementById('earlyDismissalModal'); // Ensure this matches your HTML
+    const pickedByText = document.getElementById('pickedByText'); // Ensure this matches your HTML
+    const closeBtn = modal.querySelector('.close');
+
+    // Debugging: Verify modal elements exist
+    if (!modal || !pickedByText || !closeBtn) {
+        console.error('Early dismissal modal elements not found.');
+        return;
+    }
+
+    // Attach click event to all links with class "show-picked-by"
+    document.querySelectorAll('.show-picked-by').forEach(link => {
+        link.addEventListener('click', function (e) {
+            e.preventDefault(); // Prevent default link behavior
+
+            const pickedBy = this.dataset.pickedBy || 'Unknown'; // Get "Picked By" value from data attribute
+
+            // Debugging: Log the "Picked By" value
+            console.log(`Picked By: ${pickedBy}`);
+
+            // Set the modal text
+            pickedByText.textContent = `Picked By: ${pickedBy}`;
+            modal.style.display = 'block'; // Show the modal
+        });
+    });
+
+    // Attach click event to close button
+    closeBtn.addEventListener('click', () => {
+        modal.style.display = 'none'; // Hide the modal
+    });
+
+    // Close modal when clicking outside of it
+    window.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            modal.style.display = 'none'; // Hide the modal
+        }
+    });
+},
+
+
+
+  // Helper function to format the date
+    formatDate: function(date) {
+        if (date) {
+            // Check if the date is already a string in 'dd/MM/yyyy' format
+            if (typeof date === 'string' && /^\d{2}\/\d{2}\/\d{4}$/.test(date)) {
+                return date;
+            }
+            // Parse and format date object
+            const parsedDate = new Date(date);
+            if (!isNaN(parsedDate)) {
+                const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
+                return new Intl.DateTimeFormat('en-GB', options).format(parsedDate);
+            }
+        }
+        return ''; // Return empty if the date is invalid
+    },
+    
+
+    // Helper function to format time
+    formatTime: function(time) {
+        if (!time) return 'N/A';
+        if (typeof time === 'string' && /^\d{1,2}:\d{2} (AM|PM)$/.test(time)) return time;
+
+        const [hours, minutes, seconds] = time.split(':').map(Number);
+        const date = new Date();
+        date.setHours(hours || 0, minutes || 0, seconds || 0);
+
+        const options = { hour: '2-digit', minute: '2-digit', hour12: true };
+        return new Intl.DateTimeFormat('en-GB', options).format(date);
+    },
+
+
+     // Paginate and display data
+paginateTable: function (dataset = this.showingToday ? this.filteredData : this.data) {
+    const totalItems = dataset.length;
+    const totalPages = Math.ceil(totalItems / this.itemsPerPage);
+    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    const endIndex = startIndex + this.itemsPerPage;
+
+    this.displayData(dataset.slice(startIndex, endIndex));
+    this.createPaginationControls(totalPages, dataset);
+},
+
+
+    // Create pagination controls
+// Create pagination controls
+createPaginationControls: function (totalPages) {
+    const paginationControls = document.getElementById('paginationControls');
+    paginationControls.innerHTML = ''; // Clear previous controls
+
+    const maxPagesToShow = 2; // Maximum number of pages to display in the pagination
+    const startPage = Math.max(1, this.currentPage - 2);
+    const endPage = Math.min(totalPages, this.currentPage + 2);
+
+    const createButton = (page, text = page, isDisabled = false, isCurrent = false) => {
+        const button = document.createElement('button');
+        button.textContent = text;
+        button.disabled = isDisabled;
+        button.classList.add('pagination-button');
+        if (isCurrent) button.classList.add('current');
+        if (isDisabled) button.classList.add('disabled');
+
+        button.onclick = () => {
+            if (!isDisabled) {
+                this.currentPage = page; // Update the current page
+                this.paginateTable(this.showingToday ? this.filteredData : this.data); // Re-paginate with the correct dataset
+            }
+        };
+
+        return button;
+    };
+
+    // "Previous" button
+    paginationControls.appendChild(createButton(this.currentPage - 1, '‹', this.currentPage === 1));
+
+    // First page and spacer (if needed)
+    if (startPage > 1) {
+        paginationControls.appendChild(createButton(1));
+        if (startPage > 2) {
+            const spacer = document.createElement('span');
+            spacer.textContent = '..';
+            spacer.classList.add('pagination-spacer');
+            paginationControls.appendChild(spacer);
+        }
+    }
+
+    // Main page numbers
+    for (let i = startPage; i <= endPage; i++) {
+        paginationControls.appendChild(createButton(i, i, false, i === this.currentPage));
+    }
+
+    // Last page and spacer (if needed)
+    if (endPage < totalPages) {
+        if (endPage < totalPages - 1) {
+            const spacer = document.createElement('span');
+            spacer.textContent = '...';
+            spacer.classList.add('pagination-spacer');
+            paginationControls.appendChild(spacer);
+        }
+        paginationControls.appendChild(createButton(totalPages));
+    }
+
+    // "Next" button
+    paginationControls.appendChild(createButton(this.currentPage + 1, '›', this.currentPage === totalPages));
+}
+
+};
+
+
+
+
+window.onload = function () {
+    // Fetch all student data from the server
+    google.script.run.withSuccessHandler(function (students) {
+        studentData.data = students; // Load all data into the `studentData` object
+        studentData.currentPage = 1; // Set initial page to 1
+        studentData.showingToday = false; // Set default to showing all data
+
+        // Set up the toggle button for today's data
+        const toggleButton = document.getElementById('toggleTodayData');
+        toggleButton.textContent = 'Show Today Data'; // Default to "Show Today Data"
+        toggleButton.classList.remove('active'); // Set default state for full data
+
+        // Initially display all data
+        studentData.paginateTable(studentData.data); // Display all data initially
+
+        // Add click listener to toggle today's data and full data dynamically
+        toggleButton.addEventListener('click', () => studentData.toggleTodayData());
+    }).getStudents();
+};
+
+
+
+
+
+
+
+
+document.querySelectorAll('.resize-handle').forEach((handle) => {
+    handle.addEventListener('mousedown', (e) => {
+        const th = e.target.closest('th');
+        const startX = e.pageX;
+        const startWidth = th.offsetWidth;
+
+        const onMouseMove = (e) => {
+            const newWidth = startWidth + (e.pageX - startX);
+            th.style.width = `${newWidth}px`;
+        };
+
+        const onMouseUp = () => {
+            document.removeEventListener('mousemove', onMouseMove);
+            document.removeEventListener('mouseup', onMouseUp);
+        };
+
+        document.addEventListener('mousemove', onMouseMove);
+        document.addEventListener('mouseup', onMouseUp);
+    });
+});
+
+
+function lookupStudent() {
+  const studentNumber = document.getElementById('studentNumber').value.trim();
+
+  if (!studentNumber) {
+    showMessage('Please enter a valid student number.', 'error');
+    return;
+  }
+
+  showLoading();
+
+  google.script.run
+  .withSuccessHandler((studentData) => {
+    if (studentData) {
+      // Populate gender
+      document.getElementById('gender').value = studentData.gender || '';
+
+      // Populate grade dropdown (Optional)
+      const gradeSelect = document.getElementById('grade');
+      gradeSelect.innerHTML = ''; // Clear previous options
+      const gradeOption = document.createElement('option');
+      gradeOption.value = studentData.grade;
+      gradeOption.textContent = studentData.grade;
+      gradeSelect.appendChild(gradeOption);
+      gradeSelect.value = studentData.grade;
+
+      // Populate class dropdown (Optional)
+      const classSelect = document.getElementById('class');
+      classSelect.innerHTML = ''; // Clear previous options
+      const classOption = document.createElement('option');
+      classOption.value = studentData.class;
+      classOption.textContent = studentData.class;
+      classSelect.appendChild(classOption);
+      classSelect.value = studentData.class;
+
+      // Update student dropdown
+      const studentSelect = document.getElementById('student');
+      studentSelect.innerHTML = ''; // Clear previous options
+      const studentOption = document.createElement('option');
+      studentOption.value = studentData.number;
+      studentOption.textContent = `${studentData.name} (${studentData.number})`;
+      studentSelect.appendChild(studentOption);
+      studentSelect.value = studentData.number;
+
+    // Show a success message with the student's name
+        showMessage(`Student "${studentData.name}" details retrieved successfully!`, 'success');
+      } else {
+        showMessage('No student found with the given number.', 'error');
+      }
+      hideLoading();
+    })
+    .withFailureHandler((error) => {
+      showMessage('Error retrieving student details.', 'error');
+      console.error('Error:', error);
+      hideLoading();
+    })
+    .getStudentDetailsByNumber(studentNumber);
+}
+
+
+// Form Handling
+const isLateCheckbox = document.getElementById('isLate');
+const isEarlyCheckbox = document.getElementById('isEarly');
+const pickedByField = document.getElementById('pickedByField');
+const pickedByInput = document.getElementById('pickedBy'); // Assuming it's the ID for the input field
+
+
+// Add event listeners to ensure mutual exclusivity
+isLateCheckbox.addEventListener('change', function () {
+if (isLateCheckbox.checked) {
+  isEarlyCheckbox.checked = false; // Uncheck "Early Dismissal"
+  pickedByField.style.display = 'none'; // Hide "Picked By" field
+}
+});
+
+isEarlyCheckbox.addEventListener('change', function () {
+if (isEarlyCheckbox.checked) {
+  isLateCheckbox.checked = false; // Uncheck "Late Arrival"
+  pickedByField.style.display = 'block'; // Show "Picked By" field
+} else {
+  pickedByField.style.display = 'none'; // Hide "Picked By" field
+}
+});
+
+    document.addEventListener("DOMContentLoaded", function () {
+      loadGenders();
+    });
+
+
+
+    function loadGenders() {
+      setLoadingState("gender", true);
+      google.script.run.withSuccessHandler(populateGenderDropdown).getGenders();
+    }
+
+function populateGenderDropdown(genders) {
+  setLoadingState("gender", false);
+  const select = document.getElementById("gender");
+
+  // Populate the gender dropdown with the available genders from the server
+  populateDropdown(select, genders, "Select Gender");
+
+  // If gender is already populated in the student data, set the value
+  if (genders.length) {
+    const studentGender = document.getElementById('gender').value;  // Assuming gender is in student data
+    select.value = studentGender || 'Select Gender';
+  }
+}
+
+
+function handleGenderChange() {
+  const gender = document.getElementById("gender").value;
+  resetDropdown("grade", "Select Grade", true);
+  resetDropdown("class", "Select Class", true);
+  resetDropdown("student", "Select Student", true);
+
+  if (gender) {
+    setLoadingState("grade", true);
+    google.script.run.withSuccessHandler(populateGradeDropdown).getGrade();
+  }
+}
+
+
+
+// Populate Grades
+function populateGradeDropdown(grades) {
+  setLoadingState("grade", false);
+  const select = document.getElementById("grade");
+  populateDropdown(select, grades, "Select Grade");
+}
+
+// Handle Grade Change
+function handleGradeChange() {
+  const gender = document.getElementById("gender").value;
+  const grade = document.getElementById("grade").value;
+  resetDropdown("class", "Select Class", true);
+  resetDropdown("student", "Select Student", true);
+
+  if (grade) {
+    setLoadingState("class", true);
+    google.script.run
+      .withSuccessHandler((classes) => populateClassDropdown(classes))
+      .getClassesByGradeAndGender(grade, gender);
+  }
+}
+
+    function populateClassDropdown(classes) {
+      setLoadingState("class", false);
+      const select = document.getElementById("class");
+      populateDropdown(select, classes, "Select Class");
+    }
+
+    function handleClassChange() {
+      const gender = document.getElementById("gender").value;
+      const className = document.getElementById("class").value;
+      resetDropdown("student", "Select Student", true);
+
+      if (className) {
+        setLoadingState("student", true);
+        google.script.run.withSuccessHandler(populateStudentDropdown).getStudentsByClass(className, gender);
+      }
+    }
+
+    function populateStudentDropdown(students) {
+      setLoadingState("student", false);
+      const select = document.getElementById("student");
+      select.innerHTML = '<option value="">Select Student</option>';
+      students.forEach((student) => {
+        const option = document.createElement("option");
+        option.value = student.number;
+        option.textContent = `${student.name} (${student.number})`;
+        select.appendChild(option);
+      });
+      select.disabled = false;
+    }
+
+function handleSubmit(event) {
+  event.preventDefault();
+
+
+
+
+  const form = event.target;
+  const isLate = form.isLate.checked;
+  const isEarly = form.isEarly.checked;
+  const pickedBy = form.pickedBy.value.trim();
+
+  // Check if at least one checkbox is selected
+  if (!isLate && !isEarly) {
+    showMessage("Please select either 'Late Arrival' or 'Early Dismissal'.", "error");
+    return; // Stop form submission if validation fails
+  }
+
+  if (isEarly && !pickedBy) {
+      showMessage("Please enter 'Picked By' when Early Dismissal is selected.", "error");
+      return;
+  }
+
+  const formData = {
+    studentNumber: form.student.value,
+    gender: form.gender.value,
+    class: form.class.value,
+    isLate: isLate,
+    isEarly: isEarly,
+    pickedBy: isEarly ? pickedBy : null, // Include "Picked By" only if "Early Dismissal" is selected
+  };
+
+  // Disable submit button to prevent multiple submissions
+  document.getElementById("submitButton").disabled = true;
+
+  // Send data to Google Apps Script
+  google.script.run
+    .withSuccessHandler(onSuccess)
+    .withFailureHandler(onFailure)
+    .processStudentAttendance(formData);
+}
+
+
+function onSuccess() {
+  showMessage("Record Added successfully!", "success");
+  const form = document.getElementById("attendanceForm");
+  form.reset();
+  handleGenderChange(); // Reload classes only if a gender is still selected
+  document.getElementById("submitButton").disabled = false;
+}
+
+
+    function onFailure(error) {
+      showMessage("Error: " + (error.message || "An unexpected error occurred."), "error");
+      document.getElementById("submitButton").disabled = false;
+    }
+
+// Function to show a message in the alert box
+function showMessage(message, type = 'info') {
+  const messageDiv = document.getElementById("alertMessage");
+  if (!messageDiv) {
+    console.error('Alert message container not found.');
+    return;
+  }
+
+  // Apply appropriate class based on type
+  messageDiv.className = `message ${type} show`; // Example types: 'info', 'success', 'error'
+  messageDiv.innerHTML = message; // Set the alert message content
+
+  // Automatically hide the message after 5 seconds
+  setTimeout(() => {
+    messageDiv.className = 'message'; // Reset the class to hide the alert
+    messageDiv.textContent = ''; // Clear the content
+  }, 5000);
+}
+
+// Show a loading indicator
+function showLoading() {
+  const loadingIndicator = document.getElementById("loadingIndicator");
+  if (loadingIndicator) {
+    loadingIndicator.style.display = 'block';
+  } else {
+    console.error('Loading indicator element not found.');
+  }
+}
+
+// Hide the loading indicator
+function hideLoading() {
+  const loadingIndicator = document.getElementById("loadingIndicator");
+  if (loadingIndicator) {
+    loadingIndicator.style.display = 'none';
+  }
+}
+
+// Handle errors by logging and displaying a user-friendly alert
+function handleError(error) {
+  console.error(error); // Log the error for debugging
+  showMessage('An error occurred. Please try again.', 'error'); // Show an error alert to the user
+}
+
+// Function to show an alert (alternative to `showMessage`)
+function showAlert(message, type = 'info') {
+  const alertMessage = document.getElementById("alertMessage");
+  if (!alertMessage) {
+    console.error('Alert message element not found.');
+    return;
+  }
+
+  // Set the alert message content and apply styles
+  alertMessage.textContent = message;
+  alertMessage.className = `alert ${type} show`;
+
+  // Automatically hide the alert after the specified duration
+  setTimeout(() => {
+    alertMessage.className = 'alert'; // Reset the alert class
+    alertMessage.textContent = ''; // Clear the content
+  }, 5000);
+}
+
+
+    function setLoadingState(id, isLoading) {
+      const select = document.getElementById(id);
+      select.innerHTML = isLoading
+        ? '<option value="">Loading...</option>'
+        : '<option value="">Select an option</option>';
+      select.disabled = isLoading;
+    }
+
+    function populateDropdown(select, options, defaultOption) {
+      select.innerHTML = `<option value="">${defaultOption}</option>`;
+      options.forEach((option) => {
+        const opt = document.createElement("option");
+        opt.value = option;
+        opt.textContent = option;
+        select.appendChild(opt);
+      });
+      select.disabled = false;
+    }
+
+ function resetDropdown(id, defaultOption, disabled) {
+  const select = document.getElementById(id);
+  if (select.options.length !== 1 || select.options[0].textContent !== defaultOption) {
+    select.innerHTML = `<option value="">${defaultOption}</option>`;
+  }
+  select.disabled = disabled;
+}
+
+
+
+
+// Utility Functions
+const Util = {
+    formatDate(dateString) {
+        const date = new Date(dateString);
+        return isNaN(date.getTime())
+            ? dateString // Return original value if invalid
+            : date.toLocaleDateString('en-GB', {
+                  year: 'numeric',
+                  month: '2-digit',
+                  day: '2-digit',
+              });
+    },
+    debounce(func, wait) {
+        let timeout;
+        return function (...args) {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => func(...args), wait);
+        };
+    },
+};
+
+// UI Functions
+const UI = {
+    elements: {
+        loadingIndicator: document.getElementById('loadingIndicator'),
+        alertMessage: document.getElementById('alertMessage'),
+    },
+    ALERT_DURATION: 3000,
+  PAGES: ['recStaticsPage', 'addPassPage', 'viewDashboardPage', 'homePage', 'attendancePage', 'attendanceReportPage'],
+
+    init() {
+        this.attachEventListeners();
+        this.showPage('homePage'); // Start with the home page
+    },
+
+    attachEventListeners() {
+        document.querySelectorAll('.nav-link').forEach((link) => {
+            link.addEventListener('click', (e) => {
+                const pageId = e.currentTarget.dataset.page;
+                if (pageId) this.showPage(pageId);
+            });
+        });
+    },
+
+    showPage(pageId) {
+    if (!this.PAGES.includes(pageId)) {
+        console.error(`Invalid page ID: ${pageId}`);
+        return;
+    }
+
+    // Show the loading indicator before switching pages
+    this.elements.loadingIndicator.style.display = 'flex';
+
+    // Hide all pages
+    document.querySelectorAll('.page').forEach((page) => {
+        page.style.display = 'none';
+    });
+
+    // Show the selected page
+    const selectedPage = document.getElementById(pageId);
+    if (selectedPage) selectedPage.style.display = 'block';
+
+    this.updateActiveLink(pageId);
+
+    // Fetch data for the relevant page
+    switch (pageId) {
+        case 'viewDashboardPage':
+            // Replace DashboardData.fetchDashboardData with studentData logic
+            google.script.run
+                .withSuccessHandler((students) => {
+                    studentData.data = students; // Store data in studentData object
+                    studentData.paginateTable(students); // Display data with pagination
+                    this.elements.loadingIndicator.style.display = 'none'; // Hide loading indicator
+                })
+                .withFailureHandler((error) => {
+                    console.error('Error fetching student data:', error);
+                    this.elements.loadingIndicator.style.display = 'none'; // Hide loading on error
+                })
+                .getStudents(); // Fetch student data from the server
+            break;
+
+        case 'homePage':
+            this.updateDashboardStats();
+            this.elements.loadingIndicator.style.display = 'none'; // Hide loading indicator
+            break;
+
+        default:
+            this.elements.loadingIndicator.style.display = 'none'; // Hide loading for other pages
+    }
+},
+
+
+    updateActiveLink(pageId) {
+        document.querySelectorAll('.nav-link').forEach((link) => {
+            link.classList.remove('active');
+        });
+        const activeLink = document.querySelector(`.nav-link[data-page="${pageId}"]`);
+        if (activeLink) activeLink.classList.add('active');
+    },
+
+    async updateDashboardStats() {
+        try {
+            this.showLoading();
+            const stats = await google.script.run
+                .withSuccessHandler((stats) => this.renderStats(stats))
+                .getDashboardStats();
+        } catch (error) {
+            this.handleError(error);
+        } finally {
+            this.hideLoading();
+        }
+    },
+
+    renderStats(stats) {
+        const statElements = {
+            totalRecords: document.getElementById('totalRecords'),
+            todayRecords: document.getElementById('todayRecords'),
+            earlyDismissalCar: document.getElementById('earlyDismissalCar'),
+            earlyDismissalBus: document.getElementById('earlyDismissalBus'),
+            todayEarly: document.getElementById('todayEarly'),
+            todayLate: document.getElementById('todayLate'),
+        };
+
+        Object.keys(stats).forEach((key) => {
+            const statElement = statElements[key];
+            if (statElement) statElement.textContent = stats[key] || 0;
+        });
+    },
+
+    showLoading() {
+        this.elements.loadingIndicator.style.display = 'block';
+    },
+
+    hideLoading() {
+        this.elements.loadingIndicator.style.display = 'none';
+    },
+
+    handleError(error) {
+        console.error(error);
+        this.showAlert('Error fetching data.');
+    },
+
+    showAlert(message, type = 'info') {
+        const alertElement = this.elements.alertMessage;
+        alertElement.textContent = message;
+        alertElement.className = `message ${type} show`;
+        setTimeout(() => {
+            alertElement.className = 'message';
+            alertElement.textContent = '';
+        }, this.ALERT_DURATION);
+    },
+};
+// Initialize UI
+document.addEventListener('DOMContentLoaded', () => {
+    UI.init();
+});
+
+document.getElementById('lookupButton').addEventListener('click', lookupStudent);
+
+
+function initializeLogoutButton() {
+
+        const logoutButton = document.getElementById('logoutButton');
+
+
+
+        if (logoutButton) {
+
+          logoutButton.addEventListener('click', function () {
+
+            // SweetAlert confirmation
+
+            Swal.fire({
+
+              title: 'Are you sure you want to log out?',
+
+              icon: 'warning',
+
+              showCancelButton: true,
+
+              confirmButtonText: 'Yes, log out',
+
+              cancelButtonText: 'Cancel',
+
+            }).then((result) => {
+
+              if (result.isConfirmed) {
+
+                // Clear localStorage to log out
+
+                localStorage.removeItem('isLoggedIn');
+
+                localStorage.removeItem('userEmail');
+
+
+
+                // Redirect to the login page
+
+                google.script.run
+
+                  .withSuccessHandler(function (htmlContent) {
+
+                    document.open();
+
+                    document.write(htmlContent);
+
+                    document.close();
+
+                  })
+
+                  .getLoginPage(); // Call the `getLoginPage` function from Apps Script
+
+              }
+
+            });
+
+          });
+
+        }
+
+      }
+
+
+// Attendance Page
+
+        const periods = ["Period 1", "Period 2", "Period 3", "Period 4", "Period 5", "Period 6", "Period 7", "Period 8"];
+
+        function loadGendersAttendance() {
+            console.log("DEBUG: loadGenders function called.");
+            setLoadingState("attendanceGenderplus", true); // Show loading state for attendanceGender dropdown
+
+            google.script.run
+                .withSuccessHandler((genders) => {
+                    console.log("DEBUG: Genders fetched successfully:", genders);
+                    setLoadingState("attendanceGenderplus", false); // Hide loading state after fetching genders
+                    const genderDropdown = document.getElementById("attendanceGenderplus"); // Corrected ID
+                    genderDropdown.innerHTML = `<option value="">Select Gender</option>`;
+                    genders.forEach((gender) => {
+                        const option = document.createElement("option");
+                        option.value = gender;
+                        option.textContent = gender;
+                        genderDropdown.appendChild(option);
+                    });
+                })
+                .withFailureHandler((error) => {
+                    console.error("ERROR: Failed to fetch genders:", error);
+                    setLoadingState("attendanceGenderplus", false); // Hide loading state even on error
+                    Swal.fire({
+                        icon: "error",
+                        title: "Failed to load genders. Please try again.",
+                    });
+                })
+                .getGenders();
+        }
+
+        /**
+         * Handle gender change and populate grades dropdown
+         */
+        function handleGenderChangeAttendance() {
+            console.log("DEBUG: Gender changed...");
+
+            const gender = document.getElementById("attendanceGenderplus").value; // Corrected ID
+            const gradeDropdown = document.getElementById("attendanceGradeplus");
+            const classDropdown = document.getElementById("attendanceClassplus");
+
+            // Reset dependent dropdowns and show loading state for grades
+            gradeDropdown.innerHTML = `<option value="">Select Grade</option>`;
+            gradeDropdown.disabled = true;
+            setLoadingState("attendanceGradeplus", true); // Corrected ID
+
+            classDropdown.innerHTML = `<option value="">Select Class</option>`;
+            classDropdown.disabled = true;
+
+            if (gender) {
+                // Call the backend Apps Script function to get grades
+                google.script.run
+                    .withSuccessHandler((grades) => {
+                        console.log("DEBUG: Grades fetched successfully:", grades);
+                        setLoadingState("attendanceGradeplus", false); // Corrected ID
+
+                        // Populate grades
+                        grades.forEach((grade) => {
+                            const option = document.createElement("option");
+                            option.value = grade;
+                            option.textContent = grade;
+                            gradeDropdown.appendChild(option);
+                        });
+
+                        gradeDropdown.disabled = false; // Enable grades dropdown
+                    })
+                    .withFailureHandler((error) => {
+                        console.error("ERROR: Failed to fetch grades:", error);
+                        setLoadingState("attendanceGradeplus", false); // Corrected ID
+                        Swal.fire({
+                            icon: "error",
+                            title: "Failed to load grades. Please try again.",
+                        });
+                    })
+                    .getGrade();
+            } else {
+                setLoadingState("attendanceGradeplus", false); // Corrected ID
+            }
+        }
+
+        /**
+         * Handle grade change and populate classes dropdown
+         */
+        function handleGradeChangeAttendance() {
+            console.log("DEBUG: Grade changed...");
+
+            const gender = document.getElementById("attendanceGenderplus").value; // Corrected ID
+            const grade = document.getElementById("attendanceGradeplus").value;
+            const classDropdown = document.getElementById("attendanceClassplus");
+
+            // Reset class dropdown and show loading state for classes
+            classDropdown.innerHTML = `<option value="">Select Class</option>`;
+            classDropdown.disabled = true;
+            setLoadingState("attendanceClassplus", true); // Corrected ID
+
+            if (gender && grade) {
+                // Call the backend Apps Script function to get classes
+                google.script.run
+                    .withSuccessHandler((classes) => {
+                        console.log("DEBUG: Classes fetched successfully:", classes);
+                        setLoadingState("attendanceClassplus", false); // Corrected ID
+
+                        // Populate classes
+                        classes.forEach((className) => {
+                            const option = document.createElement("option");
+                            option.value = className;
+                            option.textContent = className;
+                            classDropdown.appendChild(option);
+                        });
+
+                        classDropdown.disabled = false; // Enable classes dropdown
+                    })
+                    .withFailureHandler((error) => {
+                        console.error("ERROR: Failed to fetch classes:", error);
+                        setLoadingState("attendanceClassplus", false); // Corrected ID
+                        Swal.fire({
+                            icon: "error",
+                            title: "Failed to load classes. Please try again.",
+                        });
+                    })
+                    .getClassesByGradeAndGender(grade, gender);
+            } else {
+                setLoadingState("attendanceClassplus", false); // Corrected ID
+            }
+        }
+
+        /**
+         * Display students table with dynamic period columns and data
+         */
+        function displayStudentsTableAttendance(students) {
+            console.log("DEBUG: Displaying students table with data:", students);
+
+            const tableBody = document.getElementById("attendanceStudents-table-bodyplus");
+            tableBody.innerHTML = ""; // Clear previous data
+
+            // Add dynamic period columns to the table header with checkboxes
+            const tableHeader = document.querySelector("#attendance-tableplus thead tr");
+            tableHeader.innerHTML = "<th>Student Number</th><th>Student Name</th>"; // Reset table header
+            periods.forEach((period, index) => {
+                const th = document.createElement("th");
+                th.innerHTML = `
+                    <label for="period-${index}plus">
+                        <input type="radio" name="periodplus" id="period-${index}plus" onchange="togglePeriod(${index})" ${index === 0 ? 'checked' : ''}>
+                        ${period}
+                    </label>
+                `;
+                tableHeader.appendChild(th);
+            });
+
+            // Populate rows with student data
+            students.forEach((student) => {
+                const row = document.createElement("tr");
+                row.setAttribute("data-student", student.number);
+
+                // Student info columns
+                row.innerHTML = `
+                    <td>${student.number}</td>
+                    <td>${student.name}</td>
+                `;
+
+                // Add attendance options for each period (only the active period will be enabled)
+                periods.forEach((period, index) => {
+                    const td = document.createElement("td");
+                    td.innerHTML = `
+                        <select data-student="${student.number}" data-period="${period}" disabled>
+                            <option value="">--</option>
+                            <option value="P">P</option>
+                            <option value="UA">UA</option>
+                            <option value="AA">AA</option>
+                            <option value="L">L</option>
+                        </select>
+                    `;
+                    row.appendChild(td);
+                });
+
+                tableBody.appendChild(row);
+            });
+
+            // Activate the first period by default
+            togglePeriod(0);
+        }
+
+        /**
+         * Toggle the active period column and enable/disable relevant selects
+         */
+        function togglePeriod(periodIndex) {
+            console.log(`DEBUG: Toggling period to index: ${periodIndex}`);
+
+            periods.forEach((_, index) => {
+                const checkBox = document.getElementById(`period-${index}plus`);
+                const periodColumnCells = document.querySelectorAll(`#attendance-tableplus tbody td:nth-child(${index + 3}) select`);
+
+                if (index !== periodIndex) {
+                    checkBox.checked = false;
+                    periodColumnCells.forEach((cell) => {
+                        cell.disabled = true;
+                        cell.style.opacity = "0.3"; // Dim non-active columns
+                    });
+                } else {
+                    checkBox.checked = true;
+                    periodColumnCells.forEach((cell) => {
+                        cell.disabled = false;
+                        cell.style.opacity = "1"; // Keep the active period fully visible
+                    });
+                }
+            });
+        }
+
+        /**
+         * Submit attendance data
+         */
+        function submitAttendance() {
+            console.log("DEBUG: Submitting attendance data...");
+
+            const attendanceData = [];
+            const rows = document.querySelectorAll("#attendance-tableplus tbody tr");
+            let isValid = true;
+
+            const submitButton = document.getElementById("submit-attendanceplus");
+            submitButton.disabled = true; // Disable the button during submission
+
+            const grade = document.getElementById("attendanceGradeplus").value;
+            const gender = document.getElementById("attendanceGenderplus").value;
+            const className = document.getElementById("attendanceClassplus").value;
+            const currentDate = new Date().toLocaleDateString("en-GB");
+
+            // Validate grade, gender, and class
+            if (!grade || !gender || !className) {
+                console.error("ERROR: Grade, gender, or class not selected!");
+                Swal.fire({
+                    icon: "error",
+                    title: "Please select Grade, Gender, and Class before submitting.",
+                });
+                submitButton.disabled = false;
+                return;
+            }
+
+            rows.forEach((row) => {
+                const studentNumber = row.getAttribute("data-student");
+                const studentName = row.querySelector("td:nth-child(2)").textContent;
+                const selects = row.querySelectorAll("select");
+
+                selects.forEach((select) => {
+                    // Only validate and submit data if it's filled in and not already set for this period
+                    if (!select.disabled && select.value === "") {
+                        isValid = false;
+                        select.style.border = "2px solid red";
+                    } else {
+                        select.style.border = "";
+                    }
+
+                    if (!select.disabled && select.value) {
+                        const period = select.getAttribute("data-period");
+                        const status = select.value;
+
+                        // Ensure to push data for this period if it's filled in, even if it was previously filled
+                        attendanceData.push({
+                            studentNumber,
+                            studentName,
+                            grade,
+                            gender,
+                            className,
+                            period,
+                            status,
+                            date: currentDate,
+                        });
+                    }
+                });
+            });
+
+            if (!isValid) {
+                console.error("ERROR: Missing attendance statuses for some students.");
+                Swal.fire({
+                    icon: "error",
+                    title: "Please fill in all attendance statuses before submitting.",
+                });
+                submitButton.disabled = false;
+                return;
+            }
+
+            console.log("DEBUG: Attendance Data:", attendanceData);
+
+            // Submit data to server
+            google.script.run
+                .withSuccessHandler(() => {
+                    console.log("DEBUG: Attendance submitted successfully.");
+                    Swal.fire({
+                        icon: "success",
+                        title: "Attendance submitted successfully!",
+                    });
+                    submitButton.disabled = false;
+                })
+                .withFailureHandler((error) => {
+                    console.error("ERROR: Failed to submit attendance:", error);
+                    Swal.fire({
+                        icon: "error",
+                        title: "Failed to submit attendance. Please try again.",
+                    });
+                    submitButton.disabled = false;
+                })
+                .saveAttendance(attendanceData);
+        }
+
+        /**
+         * Fill all attendance for the active period, only filling blanks.
+         */
+        function fillAll() {
+            console.log("DEBUG: Filling all attendance statuses.");
+
+            const status = document.getElementById("attendance-statusplus").value;
+
+            if (!status) {
+                console.error("ERROR: No attendance status selected for Fill All.");
+                Swal.fire({
+                    icon: "error",
+                    title: "Please select an attendance status to fill.",
+                });
+                return;
+            }
+
+            const periodIndex = getActivePeriodIndex();
+            const periodColumnCells = document.querySelectorAll(`#attendance-tableplus tbody td:nth-child(${periodIndex + 3}) select`);
+
+            periodColumnCells.forEach((select) => {
+                // Only fill the select if it's blank
+                if (!select.value) {
+                    select.value = status;
+                }
+            });
+        }
+
+        /**
+         * Get the currently active period index
+         */
+        function getActivePeriodIndex() {
+            console.log("DEBUG: Getting active period index.");
+
+            const checkedPeriod = document.querySelector('input[name="periodplus"]:checked');
+            if (!checkedPeriod) return 0;
+            return periods.findIndex((_, index) => `period-${index}plus` === checkedPeriod.id);
+        }
+
+        /**
+         * Handle class change and fetch student data
+         */
+        function handleClassChangeAttendance() {
+            console.log("DEBUG: Handling class change.");
+
+            const className = document.getElementById("attendanceClassplus").value; // Corrected ID
+            resetTableAttendance();
+            showLoadingAnimationAttendance();
+
+            if (className) {
+                google.script.run
+                    .withSuccessHandler((students) => {
+                        console.log("DEBUG: Students fetched successfully:", students);
+                        hideLoadingAnimationAttendance();
+                        displayStudentsTableAttendance(students);
+                    })
+                    .withFailureHandler((error) => {
+                        console.error("ERROR: Failed to fetch students:", error);
+                        hideLoadingAnimationAttendance();
+                        Swal.fire({
+                            icon: "error",
+                            title: "Failed to load students. Please try again.",
+                        });
+                    })
+                    .getStudentsByClass(className);
+            } else {
+                hideLoadingAnimationAttendance();
+            }
+        }
+
+        function setLoadingState(id, isLoading) {
+            const select = document.getElementById(id);
+            select.innerHTML = isLoading
+                ? '<option value="">Loading...</option>'
+                : '<option value="">Select an option</option>';
+            select.disabled = isLoading;
+        }
+
+        /**
+         * Show loading animation
+         */
+        function showLoadingAnimationAttendance() {
+            console.log("DEBUG: Showing loading animation.");
+            const loadingRow = document.getElementById("loading-rowplus");
+            loadingRow.style.display = "";
+        }
+
+        /**
+         * Hide loading animation
+         */
+        function hideLoadingAnimationAttendance() {
+            console.log("DEBUG: Hiding loading animation.");
+            const loadingRow = document.getElementById("loading-rowplus");
+            loadingRow.style.display = " none";
+        }
+
+        /**
+         * Reset the table to its default state
+         */
+        function resetTableAttendance() {
+            console.log("DEBUG: Resetting table.");
+            const tableHeader = document.querySelector("#attendance-tableplus thead tr");
+            tableHeader.innerHTML = "<th>Student Number</th><th>Student Name</th>";
+            periods.forEach((period, index) => {
+                const th = document.createElement("th");
+                th.innerHTML = `
+                    <label for="period-${index}plus">
+                        <input type="radio" name="periodplus" id="period-${index}plus" onchange="togglePeriod(${index})" ${index === 0 ? 'checked' : ''}>
+                        ${period}
+                    </label>
+                `;
+                tableHeader.appendChild(th);
+            });
+            const tableBody = document.getElementById("attendanceStudents-table-bodyplus");
+            tableBody.innerHTML = `
+                <tr id="loading-rowplus" style="display: none;">
+                    <td colspan="3" style="text-align: center;">Loading...</td>
+                </tr>
+            `;
+        }
+
+        window.onload = function () {
+            console.log("DEBUG: Page loaded. Initializing loadGenders...");
+            loadGendersAttendance();
+        };
+
+let filterOptionsReporting = {};
+
+        // Initial data loading
+        google.script.run.withSuccessHandler(populateFiltersReporting).getFilterOptions();
+        google.script.run.withSuccessHandler(populateStudentDropdownReporting).getFilteredStudentNames({});
+
+        function populateFiltersReporting(options) {
+            filterOptionsReporting = options;
+            populateDropdown('genderFilterReporting', options.genders);
+
+            // Disable grade and class filters initially
+            document.getElementById('gradeFilterReporting').disabled = true;
+            document.getElementById('classFilterReporting').disabled = true;
+            document.getElementById('studentSelectReporting').disabled = true;
+            document.getElementById('displayReportButtonReporting').disabled = true;
+
+            // Add event listeners
+            document.getElementById('genderFilterReporting').addEventListener('change', handleGenderChangeReporting);
+            document.getElementById('gradeFilterReporting').addEventListener('change', handleGradeChangeReporting);
+            document.getElementById('classFilterReporting').addEventListener('change', updateStudentDropdownReporting);
+            document.getElementById('studentSelectReporting').addEventListener('change', handleStudentSelectReporting);
+            document.getElementById('displayReportButtonReporting').addEventListener('click', displayStudentReportHandlerReporting);
+        }
+
+        function populateDropdown(selectId, values) {
+            const select = document.getElementById(selectId);
+            select.innerHTML = '<option value="">All</option>'; // Clear previous options
+            values.forEach(value => {
+                const option = document.createElement('option');
+                option.value = value;
+                option.text = value;
+                select.appendChild(option);
+            });
+        }
+
+        function handleGenderChangeReporting() {
+            const selectedGender = document.getElementById('genderFilterReporting').value;
+            document.getElementById('gradeFilterReporting').disabled = selectedGender === "";
+            document.getElementById('classFilterReporting').disabled = true;
+            document.getElementById('studentSelectReporting').innerHTML = '<option value="">-- Select a student --</option>';
+            document.getElementById('studentSelectReporting').disabled = true;
+            document.getElementById('displayReportButtonReporting').disabled = true;
+
+            if (selectedGender) {
+                google.script.run.withSuccessHandler(populateGradesReporting).getGradesByGender(selectedGender);
+            }
+        }
+
+        function populateGradesReporting(grades){
+            populateDropdown('gradeFilterReporting', grades)
+        }
+
+        function handleGradeChangeReporting() {
+            const selectedGender = document.getElementById('genderFilterReporting').value;
+            const selectedGrade = document.getElementById('gradeFilterReporting').value;
+
+            document.getElementById('classFilterReporting').disabled = selectedGrade === "";
+            document.getElementById('studentSelectReporting').innerHTML = '<option value="">-- Select a student --</option>';
+            document.getElementById('studentSelectReporting').disabled = true;
+            document.getElementById('displayReportButtonReporting').disabled = true;
+
+            if (selectedGrade) {
+                google.script.run.withSuccessHandler(populateClassesReporting).getClassesByGradeAndGender(selectedGrade,selectedGender);
+            }
+        }
+
+        function populateClassesReporting(classes){
+            populateDropdown('classFilterReporting', classes)
+        }
+
+        function updateStudentDropdownReporting() {
+            const grade = document.getElementById('gradeFilterReporting').value || null;
+            const gender = document.getElementById('genderFilterReporting').value || null;
+            const className = document.getElementById('classFilterReporting').value || null;
+            const filter = { grade, gender, class: className };
+
+            document.getElementById('studentSelectReporting').innerHTML = '<option value="">-- Select a student --</option>';
+            document.getElementById('studentSelectReporting').disabled = true;
+            document.getElementById('displayReportButtonReporting').disabled = true;
+
+            if(className){
+                google.script.run.withSuccessHandler(populateStudentDropdownReporting).getFilteredStudentNames(filter);
+            }
+        }
+
+        function populateStudentDropdownReporting(studentNames) {
+            const select = document.getElementById('studentSelectReporting');
+            populateDropdown('studentSelectReporting', studentNames);
+            document.getElementById('studentSelectReporting').disabled = false;
+        }
+
+        function handleStudentSelectReporting() {
+            document.getElementById('displayReportButtonReporting').disabled = this.value === "";
+        }
+
+        function displayStudentReportHandlerReporting(){
+            const studentName = document.getElementById('studentSelectReporting').value;
+            const classSelect = document.getElementById('classFilterReporting');
+            let className = classSelect.options[classSelect.selectedIndex].text;
+            if (className === "All") {
+                className = ""; 
+            }
+            if (studentName) {
+                google.script.run.withSuccessHandler(function(summary){
+                    displayStudentReport(summary, studentName, className);
+                }).getAttendanceSummaryForStudent(studentName);
+                document.getElementById('studentReportingContainer').style.display = 'block';
+            } else {
+                document.getElementById('studentReportingContainer').style.display = 'none';
+            }
+        }
+
+        function displayStudentReport(summary, studentName, className) {
+    if (!summary) {
+        Swal.fire({ // SweetAlert2 instead of alert()
+            icon: 'info',
+            title: 'No Data',
+            text: 'No attendance records found for this student.',
+            timer: 3000, // Auto-close after 3 seconds
+            showConfirmButton: false // Hide the confirm button
+        });
+        return;
+    }
+
+    const tableBody = document.getElementById('studentTableReporting').querySelector('tbody');
+    tableBody.innerHTML = ''; // Clear the table body before adding new data
+
+    const labels = ['Present', 'Late', 'Unauthorized Absence', 'Authorized Absence', 'Early Dismissal'];
+    const data = [summary.present, summary.late, summary.unauthorizedAbsence, summary.authorizedAbsence, summary.earlyDismissal];
+
+    labels.forEach((label, index) => {
+        const row = tableBody.insertRow();
+        const cell1 = row.insertCell();
+        const cell2 = row.insertCell();
+        cell1.textContent = label;
+        cell2.textContent = data[index];
+    });
+
+    const ctx = document.getElementById('studentChartReporting').getContext('2d');
+    // Destroy the previous chart instance if it exists
+    if (window.myChart) {
+      window.myChart.destroy();
+    }
+    window.myChart = new Chart(ctx, { //Create a global variable to store the chart instance
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Attendance Count',
+                data: data,
+                backgroundColor: [
+                   'rgba(75, 192, 192, 0.5)',  // Green for Present
+                   'rgba(255, 205, 86, 0.5)', // Yellow for Late
+                   'rgba(255, 99, 132, 0.5)', // Red for Unauthorized Absences
+                   'rgba(54, 162, 235, 0.5)',  // Blue for Authorized Absences
+                   'rgba(153, 102, 255, 0.8)' // Purple for Early Dismissal
+                ],
+                borderColor: 'rgba(0, 0, 0, 0)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            },
+            plugins: {
+                title: {
+                    display: true,
+                    text: className ? `Attendance Summary for ${studentName} (Class: ${className})` : `Attendance Summary for ${studentName}`,
+                    font: {
+                        size: 16
+                    }
+                },
+                datalabels: {
+                    formatter: (value, context) => {
+                        return value;
+                    },
+                    color: 'black',
+                    anchor: 'end',
+                    align: 'top',
+                    offset: 5
+                }
+            },
+            legend: {
+                display: false
+            }
+        }
+    });
+}
+
+        function showStudentReport(studentIdentifier, isNumber) {
+            let googleScriptCall;
+            let studentName;
+            let className;
+
+            if (isNumber) {
+                googleScriptCall = google.script.run.withSuccessHandler(function(result) {
+                    if (result && result.summary && result.studentName && result.className) {
+                        displayStudentReport(result.summary, result.studentName, result.className);
+                        document.getElementById('studentReportingContainer').style.display = 'block';
+                    } else {
+                        alert("Student with this number not found.");
+                        document.getElementById('studentReportingContainer').style.display = 'none';
+                    }
+                }).getAttendanceSummaryByNumber(studentIdentifier);
+            } else {
+                googleScriptCall = google.script.run.withSuccessHandler(function(summary){
+                    const classSelect = document.getElementById('classFilterReporting');
+                    let className = classSelect.options[classSelect.selectedIndex].text;
+                    if (className === "All") {
+                        className = ""; 
+                    }
+                    displayStudentReport(summary, studentIdentifier, className);
+                    document.getElementById('studentReportingContainer').style.display = 'block';
+                }).getAttendanceSummaryForStudent(studentIdentifier);
+            }
+        }
+
+        document.getElementById('displayReportButtonReporting').addEventListener('click', function() {
+            const studentName = document.getElementById('studentSelectReporting').value;
+            if (studentName) {
+                showStudentReport(studentName, false);
+            } else {
+                document.getElementById('studentReportingContainer').style.display = 'none';
+            }
+        });
+
+        document.getElementById('showReportByNumberReporting').addEventListener('click', function() {
+    const studentNumber = document.getElementById('studentNumberReporting').value;
+    if (studentNumber) {
+        google.script.run.withSuccessHandler(function(result) {
+            if (result && result.summary && result.studentName && result.className) {
+                displayStudentReport(result.summary, result.studentName, result.className);
+                document.getElementById('studentReportingContainer').style.display = 'block';
+            } else {
+                Swal.fire({ // SweetAlert2 instead of alert()
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Student with this number not found.',
+                    timer: 3000, // Auto-close after 3 seconds
+                    showConfirmButton: false // Hide the confirm button
+                });
+            }
+        }).getAttendanceSummaryByNumber(studentNumber);
+    } else {
+        Swal.fire({ // SweetAlert2 instead of alert()
+                    icon: 'warning',
+                    title: 'Warning',
+                    text: 'Please enter a student number.',
+                    timer: 3000, // Auto-close after 3 seconds
+                    showConfirmButton: false // Hide the confirm button
+                });
+    }
+});
+
+        function populateTable(tableId, reportData) {
+            const tableBody = document.getElementById(tableId).querySelector('tbody');
+            tableBody.innerHTML = '';
+
+            for (const category in reportData) {
+                const data = reportData[category];
+                const row = tableBody.insertRow();
+                const categoryCell = row.insertCell();
+                categoryCell.textContent = category;
+                const totalCell = row.insertCell();
+                totalCell.textContent = data.total;
+                const presentCell = row.insertCell();
+                presentCell.textContent = data.present;
+                const unauthorizedAbsenceCell = row.insertCell();
+                unauthorizedAbsenceCell.textContent = data.unauthorizedAbsence;
+                const authorizedAbsenceCell = row.insertCell();
+                authorizedAbsenceCell.textContent = data.authorizedAbsence;
+                const lateCell = row.insertCell();
+                lateCell.textContent = data.late;
+                const totalAbsenceCell = row.insertCell();
+                totalAbsenceCell.textContent = data.totalAbsence;
+            }
+        }
+
+        const loadAttendanceReportsButtonReporting = document.getElementById('loadAttendanceReportsReporting');
+        const attendanceReportsDivReporting = document.getElementById('attendanceReportsReporting');
+        const displayOverallReportButtonReporting = document.getElementById('displayOverallReportReporting');
+
+        loadAttendanceReportsButtonReporting.addEventListener('click', function() {
+            if (attendanceReportsDivReporting.style.display === 'none') {
+                attendanceReportsDivReporting.style.display = 'block';
+                loadAttendanceReportsButtonReporting.textContent = "Hide Attendance Reports";
+                displayOverallReportButtonReporting.disabled = false;
+            } else {
+                attendanceReportsDivReporting.style.display = 'none';
+                loadAttendanceReportsButtonReporting.textContent = "Load Attendance Reports";
+                displayOverallReportButtonReporting.disabled = true;
+                document.getElementById('classReportContainerReporting').style.display = 'none';
+                document.getElementById('gradeReportContainerReporting').style.display = 'none';
+                document.getElementById('genderReportContainerReporting').style.display = 'none';
+            }
+        });
+
+        document.getElementById('displayOverallReportReporting').addEventListener('click', function() {
+            const reportType = document.getElementById('reportTypeReporting').value;
+
+            google.script.run.withSuccessHandler(function(reports) {
+                let reportData;
+                let tableId;
+
+                switch (reportType) {
+                    case 'class':
+                        reportData = reports.byClass;
+                        tableId = 'classReportReporting';
+                        break;
+                    case 'grade':
+                        reportData = reports.byGrade;
+                        tableId = 'gradeReportReporting';
+                        break;
+                    case 'gender':
+                        reportData = reports.byGender;
+                        tableId = 'genderReportReporting';
+                        break;
+                    default:
+                        console.error("Invalid report type.");
+                        return;
+                }
+                //Hide the other tables
+                document.getElementById('classReportContainerReporting').style.display = 'none';
+                document.getElementById('gradeReportContainerReporting').style.display = 'none';
+                document.getElementById('genderReportContainerReporting').style.display = 'none';
+
+                populateTable(tableId, reportData);
+                document.getElementById(tableId + 'ContainerReporting').style.display = 'block';
+            }).aggregateAttendanceData();
+        });
+  </script>
+  </body>
+</html>
